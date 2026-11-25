@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중2 과학: 시차와 연주시차 인터랙티브 실험실</title>
+    <style>
+        /* 기본 초기화 및 폰트 설정 */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #4f46e5;
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --bg-main: #f1f5f9;
+            --bg-card: #ffffff;
+            --space-bg: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        /* 헤더 영역 */
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 20px 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* 탭 네비게이션 */
+        .nav-tabs {
+            max-width: 1200px;
+            margin: 20px auto 0;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .tab-btn {
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        /* 메인 컨테이너 */
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 레이아웃 그리드 */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+            .nav-tabs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 카드 스타일 */
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        /* 캔버스 래퍼 */
+        .canvas-box {
+            background-color: var(--space-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.4);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* 컨트롤 UI 요소 */
+        .control-group {
+            margin-bottom: 18px;
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .value-badge {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #cbd5e1;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* 버튼 스타일 */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-blue { background-color: #dbeafe; color: #1e40af; border: 2px solid transparent; }
+        .btn-blue.active, .btn-blue:hover { background-color: #2563eb; color: white; }
+
+        .btn-red { background-color: #fee2e2; color: #991b1b; border: 2px solid transparent; }
+        .btn-red.active, .btn-red:hover { background-color: #dc2626; color: white; }
+
+        .btn-purple { background-color: #e0e7ff; color: #3730a3; border: 2px solid transparent; }
+        .btn-purple.active, .btn-purple:hover { background-color: #4f46e5; color: white; }
+
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+
+        .btn-outline { background-color: white; border: 2px solid #cbd5e1; color: var(--text-main); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-outline.active { background-color: #eff6ff; border-color: var(--primary); color: var(--primary); }
+
+        /* 핵심 개념 요약 박스 */
+        .concept-box {
+            background: linear-gradient(to right, #eff6ff, #f8fafc);
+            border-left: 5px solid var(--primary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+
+        .concept-box h4 {
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+            font-size: 1.05rem;
+        }
+
+        .concept-box p {
+            font-size: 0.95rem;
+            color: #334155;
+        }
+
+        /* 데이터 표시 패널 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .metric-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        /* 테이블 스타일 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* 퀴즈 스타일 */
+        .quiz-item {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .quiz-question {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-options { grid-template-columns: 1fr; }
+        }
+
+        .quiz-opt-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .quiz-opt-btn:hover {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+        }
+
+        .quiz-opt-btn.correct {
+            background-color: #dcfce7;
+            border-color: #16a34a;
+            color: #15803d;
+        }
+
+        .quiz-opt-btn.wrong {
+            background-color: #fee2e2;
+            border-color: #dc2626;
+            color: #b91c1c;
+        }
+
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .toast-msg.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 상단 헤더 -->
+    <header>
+        <div class="header-container">
+            <div>
+                <span class="badge">2022 개정 교육과정 · 중학교 2학년 과학 8단원 (별과 우주)</span>
+                <h1>🔭 시차와 연주시차 인터랙티브 학습실</h1>
+            </div>
+            <div style="font-size: 0.9rem; opacity: 0.9;">
+                가까운 별까지의 거리는 어떻게 측정할까?
+            </div>
+        </div>
+    </header>
+
+    <!-- 3단계 학습 탭 메뉴 -->
+    <nav class="nav-tabs" role="tablist">
+        <button class="tab-btn active" onclick="switchTab(1)" id="tab-btn-1">
+            <span>👆 1단계: 시차(Parallax) 개념 잡기</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab(2)" id="tab-btn-2">
+            <span>🌍 2단계: 연주시차 시뮬레이션</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab(3)" id="tab-btn-3">
+            <span>📊 3단계: 거리와의 관계 & 퀴즈</span>
+        </button>
+    </nav>
+
+    <main>
+        <!-- ==========================================
+             탭 1: 시차(Parallax) 개념 잡기 - 손가락 실험실
+             ========================================== -->
+        <section id="tab-1" class="tab-content active">
+            <div class="grid-2col">
+                <!-- 왼쪽: 시뮬레이션 캔버스 -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>👁️ 손가락 실험실 (위에서 내려다본 모습)</span>
+                        <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">배경 눈금자의 위치 변화를 관찰하세요</span>
+                    </div>
+                    <div class="canvas-box">
+                        <canvas id="canvasTab1" width="700" height="460"></canvas>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-title">관측 시차 (두 시선이 이루는 각도)</div>
+                            <div class="metric-value" id="t1-angle-val">36.9°</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-title">배경에서 이동해 보이는 폭</div>
+                            <div class="metric-value" id="t1-shift-val">6.0 칸</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 조작 패널 및 개념 설명 -->
+                <div class="card">
+                    <div class="card-title">🎛️ 실험 조작 패널</div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>1. 어느 눈으로 볼까요?</span>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-blue" id="btn-left-eye" onclick="setEyeMode('left')">🔵 왼쪽 눈</button>
+                            <button class="btn btn-red" id="btn-right-eye" onclick="setEyeMode('right')">🔴 오른쪽 눈</button>
+                            <button class="btn btn-purple active" id="btn-alt-eye" onclick="setEyeMode('alt')">🔄 번갈아 보기</button>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">
+                            * 실제 교실에서도 팔을 뻗어 엄지손가락을 세우고 왼쪽 눈과 오른쪽 눈을 번갈아 감아보세요!
+                        </p>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>2. 눈과 손가락 사이의 거리 조절</span>
+                            <span class="value-badge" id="t1-dist-label">가까움 (20 cm)</span>
+                        </div>
+                        <input type="range" id="t1-dist-slider" min="15" max="75" value="25" oninput="updateTab1()">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+                            <span>눈에 가까이</span>
+                            <span>중간</span>
+                            <span>눈에서 멀리</span>
+                        </div>
+                    </div>
+
+                    <div class="concept-box">
+                        <h4>💡 핵심 개념 정리: 시차(Parallax)란?</h4>
+                        <p style="margin-bottom: 8px;">
+                            <strong>시차</strong>는 관측자의 위치(왼쪽 눈과 오른쪽 눈)에 따라 정지해 있는 물체의 위치가 배경에 대해 달라 보이는 현상이며, <strong>두 관측 지점과 물체가 이루는 각도</strong>로 나타냅니다.
+                        </p>
+                        <ul style="padding-left: 20px; font-size: 0.92rem; color: #1e293b;">
+                            <li>물체가 관측자에게 <strong>가까울수록</strong> ➔ 시차가 <strong>커집니다.</strong></li>
+                            <li>물체가 관측자에게 <strong>멀수록</strong> ➔ 시차가 <strong>작아집니다.</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             탭 2: 연주시차(Annual Parallax) 시뮬레이션
+             ========================================== -->
+        <section id="tab-2" class="tab-content">
+            <div class="grid-2col">
+                <!-- 왼쪽: 우주 시점 메인 캔버스 -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>🌌 우주에서 본 모습 (지구 공전과 별의 시차)</span>
+                        <button class="btn btn-outline" id="btn-toggle-def" onclick="toggleParallaxDef()" style="flex: none; padding: 6px 12px; font-size: 0.85rem;">
+                            📐 연주시차(p) 정의 표시: ON
+                        </button>
+                    </div>
+                    <div class="canvas-box">
+                        <canvas id="canvasTab2Space" width="700" height="460"></canvas>
+                    </div>
+                    <div class="concept-box">
+                        <h4>💡 연주시차(Annual Parallax)의 정의</h4>
+                        <p>
+                            지구가 태양 주위를 공전하면서 <strong>6개월 간격(E₁ ↔ E₂)</strong>으로 별을 관측할 때 나타나는 <strong>전체 시차(2p)의 1/2</strong>을 <strong>연주시차(p)</strong>라고 합니다. (즉, 지구 공전 궤도 반지름 1 AU에 대한 시차)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 망원경 시야 & 제어 패널 -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>🔭 지구에서 망원경으로 본 밤하늘</span>
+                        <span class="value-badge" id="t2-season-badge">현재 위치: 봄 (E₂)</span>
+                    </div>
+                    
+                    <!-- 망원경 시야 캔버스 -->
+                    <div class="canvas-box" style="margin-bottom: 16px;">
+                        <canvas id="canvasTab2Scope" width="500" height="190"></canvas>
+                    </div>
+
+                    <!-- 측정값 대시보드 -->
+                    <div class="metrics-grid" style="margin-bottom: 16px;">
+                        <div class="metric-card">
+                            <div class="metric-title">별까지의 거리</div>
+                            <div class="metric-value" id="t2-dist-val">2.0 pc</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-title">연주시차 (p)</div>
+                            <div class="metric-value" style="color: #dc2626;" id="t2-parallax-val">0.50"</div>
+                        </div>
+                    </div>
+
+                    <!-- 공전 위치 제어 -->
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>1. 지구의 공전 위치 이동</span>
+                        </div>
+                        <div class="btn-group" style="margin-bottom: 10px;">
+                            <button class="btn btn-blue" onclick="setEarthPos(Math.PI)">🍂 E₁ (6개월 전)</button>
+                            <button class="btn btn-red" onclick="setEarthPos(0)">🌸 E₂ (현재)</button>
+                            <button class="btn btn-purple active" id="btn-orbit-play" onclick="toggleOrbitAnim()">⏸️ 공전 일시정지</button>
+                        </div>
+                        <input type="range" id="t2-orbit-slider" min="0" max="360" value="0" oninput="manualOrbit(this.value)">
+                    </div>
+
+                    <!-- 별까지의 거리 제어 -->
+                    <div class="control-group" style="margin-bottom: 0;">
+                        <div class="control-label">
+                            <span>2. 관측할 별(S)까지의 거리 조절</span>
+                            <span class="value-badge" id="t2-dist-badge">2.0 pc (파섹)</span>
+                        </div>
+                        <input type="range" id="t2-dist-slider" min="1.0" max="10.0" step="0.5" value="2.0" oninput="updateTab2Dist(this.value)">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+                            <span>가까운 별 (1.0 pc)</span>
+                            <span>중간 (5.0 pc)</span>
+                            <span>먼 별 (10.0 pc)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             탭 3: 거리와 연주시차의 관계 탐구 & 미니 퀴즈
+             ========================================== -->
+        <section id="tab-3" class="tab-content">
+            <div class="grid-2col" style="margin-bottom: 24px;">
+                <!-- 왼쪽: 가상 관측 데이터 수집 및 표 -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>🧪 가상 관측 실험실: 거리와 연주시차 측정</span>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>실험할 별의 거리 선택:</span>
+                            <span class="value-badge" id="t3-dist-display">2.0 pc</span>
+                        </div>
+                        <input type="range" id="t3-dist-slider" min="1.0" max="10.0" step="0.5" value="2.0" oninput="updateTab3Slider(this.value)">
+                        <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <div style="font-size: 0.95rem;">
+                                측정된 연주시차: <strong style="color: var(--accent-red); font-size: 1.15rem;" id="t3-calc-parallax">0.50"</strong>
+                            </div>
+                            <button class="btn btn-primary" onclick="recordDataPoint()" style="flex: none;">
+                                ➕ 관측 데이터 기록하기
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="max-height: 230px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 10px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>관측 번호</th>
+                                    <th>별까지의 거리 (pc)</th>
+                                    <th>연주시차 (″)</th>
+                                    <th>거리 × 연주시차</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data-table-body">
+                                <!-- JS로 초기 샘플 및 기록 데이터 렌더링 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button class="btn btn-outline" onclick="resetTableData()" style="flex: none; padding: 6px 12px; font-size: 0.85rem;">
+                            🗑️ 데이터 초기화
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 반비례 그래프 및 공식 설명 -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>📈 거리(pc)와 연주시차(") 관계 그래프</span>
+                    </div>
+                    <div class="canvas-box" style="background: #ffffff; border: 1px solid #cbd5e1; box-shadow: none;">
+                        <canvas id="canvasTab3Graph" width="540" height="280"></canvas>
+                    </div>
+                    <div class="concept-box">
+                        <h4>📐 별까지의 거리 공식과 파섹(pc)의 의미</h4>
+                        <p style="font-size: 1.05rem; font-weight: 700; color: #1e3a8a; margin: 6px 0;">
+                            별까지의 거리(pc) = <span style="font-size: 1.2rem;">1 / 연주시차(″)</span>
+                        </p>
+                        <ul style="padding-left: 20px; font-size: 0.9rem; color: #334155;">
+                            <li>연주시차와 별까지의 거리는 서로 <strong>반비례</strong>합니다.</li>
+                            <li><strong>1 파섹(pc)</strong>: 연주시차가 <strong>1″(1초)</strong>인 별까지의 거리입니다. (약 3.26 광년)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 하단: 형성평가 미니 퀴즈 -->
+            <div class="card">
+                <div class="card-title">
+                    <span>✍️ 배운 내용 확인하기 (형성평가 퀴즈)</span>
+                    <span id="quiz-score-badge" style="font-size: 0.9rem; color: var(--primary); font-weight: 700;">문제를 풀어보세요!</span>
+                </div>
+
+                <div id="quiz-container">
+                    <!-- 문제 1 -->
+                    <div class="quiz-item" id="q1">
+                        <div class="quiz-question">Q1. 오른쪽 그림(1단계 실험)처럼 엄지손가락을 눈에서 점점 멀리 떨어뜨리면서 왼쪽 눈과 오른쪽 눈으로 번갈아 볼 때, 시차는 어떻게 변할까요?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-opt-btn" onclick="checkQuiz(1, 0, false)">① 시차가 점점 커진다.</button>
+                            <button class="quiz-opt-btn" onclick="checkQuiz(1, 1, true)">② 시차가 점점 작아진다.</button>
+                            <button class="quiz-opt-btn" onclick="checkQuiz(1, 2, false)">③ 시차는 거리에 관계없이 일정하다.</button>
+                            <button class="quiz-opt-btn" onclick="checkQuiz(1, 3, false)">④ 시차가 커졌다가 다시 작아진다.</button>
+                        </div>
+                        <div class="quiz-feedback" id="q1-feedback"></div>
+                    </div>
+
+                    <!-- 문제 2 -->
+                    <div class="quiz-item" id="q2">
+                        <div class="quiz-question">Q2. 지구가 태양 주위를 공전하면서 6개월 간격으로 어떤 별을 관측했을 때 측정한 전체 시차가 0.4″였다면, 이 별의 연주시차는 얼마인가요?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-opt-btn" onclick="checkQuiz(2, 0, false)">① 0.1″</button>
+                            <button class="quiz-opt-btn" onclick="checkQuiz(2, 1, true)">② 0.2″</button>
+                            <button class="quiz-opt-btn" onclick="checkQuiz(2, 2, false)">③ 0.4″</button>
+                            <button class="quiz-opt-btn" onclick="checkQuiz(2, 3, false)">④ 0.8″</button>
+                        </div>
+                        <div class="quiz-feedback" id="q2-feedback"></div>
+                    </div>
+
+                    <!-- 문제 3 -->
+                    <div class="quiz-item" id="q3" style="margin-bottom: 0;">
+                        <div class="quiz-question">Q3. 연주시차가 0.5″인 별 A와 연주시차가 0.1″인 별 B가 있습니다. 두 별까지의 거리로 옳은 것은?</div>
+                        <div class="quiz-options">
+                            <button class="quiz-opt-btn" onclick="checkQuiz(3, 0, false)">① 별 A: 0.5 pc, 별 B: 0.1 pc</button>
+                            <button class="quiz-opt-btn" onclick="checkQuiz(3, 1, false)">② 별 A: 5 pc, 별 B: 1 pc</button>
+                            <button class="quiz-opt-btn" onclick="checkQuiz(3, 2, true)">③ 별 A: 2 pc, 별 B: 10 pc</button>
+                            <button class="quiz-opt-btn" onclick="checkQuiz(3, 3, false)">④ 별 A: 10 pc, 별 B: 2 pc</button>
+                        </div>
+                        <div class="quiz-feedback" id="q3-feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 알림 메시지 토스트 -->
+    <div class="toast-msg" id="toast">메시지</div>
+
+    <script>
+        /* =========================================================
+           전역 상태 및 유틸리티 함수
+           ========================================================= */
+        let currentTab = 1;
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        function switchTab(tabIndex) {
+            currentTab = tabIndex;
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx + 1 === tabIndex);
+            });
+            document.querySelectorAll('.tab-content').forEach((sec, idx) => {
+                sec.classList.toggle('active', idx + 1 === tabIndex);
+            });
+
+            if (tabIndex === 1) drawTab1();
+            if (tabIndex === 2) drawTab2();
+            if (tabIndex === 3) drawTab3Graph();
+        }
+
+        /* =========================================================
+           탭 1: 시차(Parallax) 개념 잡기 - 손가락 실험실 로직
+           ========================================================= */
+        const c1 = document.getElementById('canvasTab1');
+        const ctx1 = c1.getContext('2d');
+
+        let eyeMode = 'alt'; // 'left', 'right', 'alt'
+        let altEyeState = 'left'; // 번갈아 보기 상태
+        let altTimer = 0;
+        let fingerDistPercent = 25; // 15 ~ 75
+
+        function setEyeMode(mode) {
+            eyeMode = mode;
+            document.getElementById('btn-left-eye').classList.toggle('active', mode === 'left');
+            document.getElementById('btn-right-eye').classList.toggle('active', mode === 'right');
+            document.getElementById('btn-alt-eye').classList.toggle('active', mode === 'alt');
+            drawTab1();
+        }
+
+        function updateTab1() {
+            fingerDistPercent = parseInt(document.getElementById('t1-dist-slider').value);
+            let labelText = '';
+            if (fingerDistPercent < 32) labelText = `매우 가까움 (${fingerDistPercent} cm)`;
+            else if (fingerDistPercent < 55) labelText = `보통 거리 (${fingerDistPercent} cm)`;
+            else labelText = `멀리 떨어짐 (${fingerDistPercent} cm)`;
+
+            document.getElementById('t1-dist-label').textContent = labelText;
+            drawTab1();
+        }
+
+        function drawTab1() {
+            const W = c1.width;
+            const H = c1.height;
+            ctx1.clearRect(0, 0, W, H);
+
+            // 1. 배경 눈금자 (칠판/먼 배경) 그리기
+            const bgY = 65;
+            ctx1.fillStyle = '#1e293b';
+            ctx1.fillRect(30, 20, W - 60, 75);
+            ctx1.strokeStyle = '#475569';
+            ctx1.lineWidth = 2;
+            ctx1.strokeRect(30, 20, W - 60, 75);
+
+            ctx1.fillStyle = '#94a3b8';
+            ctx1.font = 'bold 13px sans-serif';
+            ctx1.textAlign = 'center';
+            ctx1.fillText('멀리 있는 배경 (칠판 눈금자)', W / 2, 38);
+
+            // 눈금 그리기 (-10 ~ +10)
+            const centerX = W / 2;
+            const unitPx = 28;
+            for (let i = -10; i <= 10; i++) {
+                const x = centerX + i * unitPx;
+                ctx1.beginPath();
+                ctx1.moveTo(x, 55);
+                ctx1.lineTo(x, i % 5 === 0 ? 80 : 72);
+                ctx1.strokeStyle = i === 0 ? '#facc15' : '#cbd5e1';
+                ctx1.lineWidth = i === 0 ? 2.5 : 1.2;
+                ctx1.stroke();
+
+                if (i % 2 === 0) {
+                    ctx1.fillStyle = i === 0 ? '#facc15' : '#e2e8f0';
+                    ctx1.font = '12px sans-serif';
+                    ctx1.fillText(i === 0 ? '0' : (i > 0 ? `+${i}` : `${i}`), x, 91);
+                }
+            }
+
+            // 2. 관측자(왼쪽 눈, 오른쪽 눈) 위치
+            const eyeY = H - 55;
+            const eyeHalfGap = 55; // 두 눈 사이 간격 110px
+            const leftEyeX = centerX - eyeHalfGap;
+            const rightEyeX = centerX + eyeHalfGap;
+
+            // 머리 윤곽선 (연하게)
+            ctx1.beginPath();
+            ctx1.arc(centerX, eyeY + 15, 78, Math.PI, 0, false);
+            ctx1.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+            ctx1.lineWidth = 3;
+            ctx1.stroke();
+
+            // 3. 손가락(관측 물체) 위치 계산
+            // fingerDistPercent: 15(눈에 가까움) ~ 75(배경에 가까움)
+            const minFingerY = bgY + 65;
+            const maxFingerY = eyeY - 65;
+            // 슬라이더 값이 작을수록 eyeY에 가까움
+            const ratio = (fingerDistPercent - 15) / (75 - 15);
+            const fingerY = maxFingerY - ratio * (maxFingerY - minFingerY);
+            const fingerX = centerX;
+
+            // 4. 시선 교차점 계산 (배경 bgY + 25 위치에 닿는 X좌표)
+            const targetLineY = 75;
+            // 왼쪽 눈 -> 손가락 연장선
+            const slopeL = (fingerX - leftEyeX) / (fingerY - eyeY);
+            const hitLeftX = leftEyeX + slopeL * (targetLineY - eyeY);
+
+            // 오른쪽 눈 -> 손가락 연장선
+            const slopeR = (fingerX - rightEyeX) / (fingerY - eyeY);
+            const hitRightX = rightEyeX + slopeR * (targetLineY - eyeY);
+
+            // 시차 각도 계산 (라디안 -> 도)
+            const dY = eyeY - fingerY;
+            const angleRad = 2 * Math.atan(eyeHalfGap / dY);
+            const angleDeg = (angleRad * 180 / Math.PI).toFixed(1);
+            const shiftUnits = (Math.abs(hitLeftX - hitRightX) / unitPx).toFixed(1);
+
+            document.getElementById('t1-angle-val').textContent = `${angleDeg}°`;
+            document.getElementById('t1-shift-val').textContent = `${shiftUnits} 칸`;
+
+            // 5. 배경 이동 폭 하이라이트
+            const activeEye = eyeMode === 'alt' ? altEyeState : eyeMode;
+
+            ctx1.fillStyle = 'rgba(250, 204, 21, 0.22)';
+            ctx1.fillRect(hitRightX, 55, hitLeftX - hitRightX, 25);
+
+            // 시차 각도 부채꼴(호) 표시
+            ctx1.beginPath();
+            ctx1.moveTo(fingerX, fingerY);
+            ctx1.arc(fingerX, fingerY, 42, Math.PI / 2 - angleRad / 2, Math.PI / 2 + angleRad / 2);
+            ctx1.closePath();
+            ctx1.fillStyle = 'rgba(250, 204, 21, 0.35)';
+            ctx1.fill();
+
+            ctx1.fillStyle = '#facc15';
+            ctx1.font = 'bold 13px sans-serif';
+            ctx1.fillText(`시차: ${angleDeg}°`, fingerX, fingerY + 58);
+
+            // 6. 시선 그리기
+            // 왼쪽 눈 시선 (파란색)
+            const isLeftActive = (activeEye === 'left');
+            ctx1.beginPath();
+            ctx1.moveTo(leftEyeX, eyeY);
+            ctx1.lineTo(hitLeftX, targetLineY);
+            ctx1.strokeStyle = isLeftActive ? '#3b82f6' : 'rgba(59, 130, 246, 0.25)';
+            ctx1.lineWidth = isLeftActive ? 3.5 : 1.5;
+            ctx1.setLineDash([8, 6]);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            // 배경 투영점 (파란색)
+            ctx1.beginPath();
+            ctx1.arc(hitLeftX, targetLineY, isLeftActive ? 8 : 5, 0, Math.PI * 2);
+            ctx1.fillStyle = isLeftActive ? '#3b82f6' : 'rgba(59, 130, 246, 0.4)';
+            ctx1.fill();
+            if (isLeftActive) {
+                ctx1.fillStyle = '#93c5fd';
+                ctx1.font = 'bold 12px sans-serif';
+                ctx1.fillText('왼쪽 눈으로 본 위치', hitLeftX, targetLineY - 14);
+            }
+
+            // 오른쪽 눈 시선 (빨간색)
+            const isRightActive = (activeEye === 'right');
+            ctx1.beginPath();
+            ctx1.moveTo(rightEyeX, eyeY);
+            ctx1.lineTo(hitRightX, targetLineY);
+            ctx1.strokeStyle = isRightActive ? '#ef4444' : 'rgba(239, 68, 68, 0.25)';
+            ctx1.lineWidth = isRightActive ? 3.5 : 1.5;
+            ctx1.setLineDash([8, 6]);
+            ctx1.stroke();
+            ctx1.setLineDash([]);
+
+            // 배경 투영점 (빨간색)
+            ctx1.beginPath();
+            ctx1.arc(hitRightX, targetLineY, isRightActive ? 8 : 5, 0, Math.PI * 2);
+            ctx1.fillStyle = isRightActive ? '#ef4444' : 'rgba(239, 68, 68, 0.4)';
+            ctx1.fill();
+            if (isRightActive) {
+                ctx1.fillStyle = '#fca5a5';
+                ctx1.font = 'bold 12px sans-serif';
+                ctx1.fillText('오른쪽 눈으로 본 위치', hitRightX, targetLineY - 14);
+            }
+
+            // 7. 손가락 아이콘 그리기
+            ctx1.beginPath();
+            ctx1.arc(fingerX, fingerY, 16, 0, Math.PI * 2);
+            ctx1.fillStyle = '#fcd34d';
+            ctx1.fill();
+            ctx1.strokeStyle = '#d97706';
+            ctx1.lineWidth = 3;
+            ctx1.stroke();
+
+            ctx1.font = '20px sans-serif';
+            ctx1.fillText('☝️', fingerX, fingerY + 7);
+            ctx1.fillStyle = '#ffffff';
+            ctx1.font = 'bold 12px sans-serif';
+            ctx1.fillText('손가락', fingerX + 38, fingerY + 4);
+
+            // 8. 왼쪽 눈 & 오른쪽 눈 그리기
+            drawEyeIcon(ctx1, leftEyeX, eyeY, '#3b82f6', '왼쪽 눈', isLeftActive);
+            drawEyeIcon(ctx1, rightEyeX, eyeY, '#ef4444', '오른쪽 눈', isRightActive);
+        }
+
+        function drawEyeIcon(ctx, x, y, color, label, isOpen) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, 18, 0, Math.PI * 2);
+            ctx.fillStyle = isOpen ? '#ffffff' : '#334155';
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = color;
+            ctx.stroke();
+
+            if (isOpen) {
+                ctx.beginPath();
+                ctx.arc(x, y - 4, 8, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+            } else {
+                // 감은 눈 표현
+                ctx.beginPath();
+                ctx.moveTo(x - 10, y);
+                ctx.lineTo(x + 10, y);
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = isOpen ? '#ffffff' : '#94a3b8';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(label + (isOpen ? ' (뜸)' : ' (감음)'), x, y + 34);
+            ctx.restore();
+        }
+
+        /* =========================================================
+           탭 2: 연주시차(Annual Parallax) 시뮬레이션 로직
+           ========================================================= */
+        const c2Space = document.getElementById('canvasTab2Space');
+        const ctx2Space = c2Space.getContext('2d');
+        const c2Scope = document.getElementById('canvasTab2Scope');
+        const ctx2Scope = c2Scope.getContext('2d');
+
+        let earthAngle = 0; // 라디안 (0: 오른쪽 E2 봄, Math.PI: 왼쪽 E1 가을)
+        let isOrbitPlaying = true;
+        let starDistancePc = 2.0; // 1.0 ~ 10.0 pc
+        let showParallaxDef = true;
+
+        // 배경 별 고정 좌표 생성
+        const bgStars = [];
+        for (let i = 0; i < 45; i++) {
+            bgStars.push({
+                xRatio: (Math.sin(i * 12.9898) * 43758.5453) % 1,
+                yRatio: (Math.cos(i * 78.233) * 23421.631) % 1,
+                size: (i % 3) + 1.2
+            });
+        }
+
+        function toggleParallaxDef() {
+            showParallaxDef = !showParallaxDef;
+            const btn = document.getElementById('btn-toggle-def');
+            btn.textContent = `📐 연주시차(p) 정의 표시: ${showParallaxDef ? 'ON' : 'OFF'}`;
+            btn.classList.toggle('active', showParallaxDef);
+            drawTab2();
+        }
+
+        function setEarthPos(rad) {
+            earthAngle = rad;
+            isOrbitPlaying = false;
+            updateOrbitPlayBtn();
+            const deg = Math.round(((earthAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2) * 180 / Math.PI);
+            document.getElementById('t2-orbit-slider').value = deg;
+            drawTab2();
+        }
+
+        function manualOrbit(degVal) {
+            isOrbitPlaying = false;
+            updateOrbitPlayBtn();
+            earthAngle = (parseFloat(degVal) * Math.PI) / 180;
+            drawTab2();
+        }
+
+        function toggleOrbitAnim() {
+            isOrbitPlaying = !isOrbitPlaying;
+            updateOrbitPlayBtn();
+        }
+
+        function updateOrbitPlayBtn() {
+            const btn = document.getElementById('btn-orbit-play');
+            btn.textContent = isOrbitPlaying ? '⏸️ 공전 일시정지' : '▶️ 지구 공전 재생';
+            btn.classList.toggle('active', isOrbitPlaying);
+        }
+
+        function updateTab2Dist(val) {
+            starDistancePc = parseFloat(val);
+            const parallaxSec = (1 / starDistancePc).toFixed(2);
+            document.getElementById('t2-dist-badge').textContent = `${starDistancePc.toFixed(1)} pc (파섹)`;
+            document.getElementById('t2-dist-val').textContent = `${starDistancePc.toFixed(1)} pc`;
+            document.getElementById('t2-parallax-val').textContent = `${parallaxSec}"`;
+            drawTab2();
+        }
+
+        function drawTab2() {
+            drawSpaceView();
+            drawTelescopeView();
+        }
+
+        function drawSpaceView() {
+            const W = c2Space.width;
+            const H = c2Space.height;
+            ctx2Space.clearRect(0, 0, W, H);
+
+            // 1. 먼 배경 별들 (상단 영역)
+            const bgLineY = 55;
+            ctx2Space.fillStyle = 'rgba(30, 41, 59, 0.7)';
+            ctx2Space.fillRect(20, 15, W - 40, 65);
+            ctx2Space.strokeStyle = '#334155';
+            ctx2Space.strokeRect(20, 15, W - 40, 65);
+
+            ctx2Space.fillStyle = '#94a3b8';
+            ctx2Space.font = 'bold 12px sans-serif';
+            ctx2Space.textAlign = 'center';
+            ctx2Space.fillText('매우 멀리 있는 배경 별들 (기준 배경)', W / 2, 32);
+
+            // 배경 기준 눈금선
+            for (let x = 60; x <= W - 60; x += 40) {
+                ctx2Space.beginPath();
+                ctx2Space.arc(x, bgLineY, 2.2, 0, Math.PI * 2);
+                ctx2Space.fillStyle = '#cbd5e1';
+                ctx2Space.fill();
+            }
+
+            // 2. 태양 및 지구 공전 궤도 (하단 영역)
+            const sunX = W / 2;
+            const sunY = H - 80;
+            const orbitRx = 115; // 1 AU 시각적 반지름
+            const orbitRy = 38;  // 비스듬히 본 공전 궤도
+
+            // 공전 궤도 타원
+            ctx2Space.beginPath();
+            ctx2Space.ellipse(sunX, sunY, orbitRx, orbitRy, 0, 0, Math.PI * 2);
+            ctx2Space.strokeStyle = 'rgba(148, 163, 184, 0.45)';
+            ctx2Space.lineWidth = 2;
+            ctx2Space.setLineDash([5, 5]);
+            ctx2Space.stroke();
+            ctx2Space.setLineDash([]);
+
+            // E1 (왼쪽: 6개월 전) & E2 (오른쪽: 현재) 기준점 마커
+            const e1X = sunX - orbitRx;
+            const e2X = sunX + orbitRx;
+
+            ctx2Space.fillStyle = '#60a5fa';
+            ctx2Space.font = 'bold 12px sans-serif';
+            ctx2Space.fillText('E₁ (6개월 전)', e1X - 10, sunY + 32);
+
+            ctx2Space.fillStyle = '#f87171';
+            ctx2Space.fillText('E₂ (현재)', e2X + 10, sunY + 32);
+
+            // 태양 그리기
+            const sunGrad = ctx2Space.createRadialGradient(sunX, sunY, 4, sunX, sunY, 24);
+            sunGrad.addColorStop(0, '#fef08a');
+            sunGrad.addColorStop(0.5, '#f59e0b');
+            sunGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+            ctx2Space.fillStyle = sunGrad;
+            ctx2Space.beginPath();
+            ctx2Space.arc(sunX, sunY, 24, 0, Math.PI * 2);
+            ctx2Space.fill();
+
+            ctx2Space.beginPath();
+            ctx2Space.arc(sunX, sunY, 12, 0, Math.PI * 2);
+            ctx2Space.fillStyle = '#fbbf24';
+            ctx2Space.fill();
+            ctx2Space.fillStyle = '#fde047';
+            ctx2Space.fillText('태양', sunX, sunY + 26);
+
+            // 3. 관측 대상 별(S) 위치 계산 (거리 1~10 pc에 따라 Y좌표 배치)
+            // 가까울수록(1pc) sunY에 가깝고, 멀수록(10pc) 위쪽 bgLineY에 가까워짐
+            const minStarY = bgLineY + 60;
+            const maxStarY = sunY - 95;
+            const distRatio = (starDistancePc - 1.0) / 9.0;
+            const starX = sunX;
+            const starY = maxStarY - distRatio * (maxStarY - minStarY);
+
+            // 4. 연주시차 정의 보조선 (태양-지구-별 직각삼각형 및 6개월 시차)
+            if (showParallaxDef) {
+                // 태양 - 별 중심선
+                ctx2Space.beginPath();
+                ctx2Space.moveTo(sunX, sunY);
+                ctx2Space.lineTo(starX, starY);
+                ctx2Space.strokeStyle = 'rgba(250, 204, 21, 0.5)';
+                ctx2Space.lineWidth = 1.5;
+                ctx2Space.setLineDash([4, 4]);
+                ctx2Space.stroke();
+                ctx2Space.setLineDash([]);
+
+                // 1 AU 밑변 강조 (태양 ~ E2)
+                ctx2Space.beginPath();
+                ctx2Space.moveTo(sunX, sunY);
+                ctx2Space.lineTo(e2X, sunY);
+                ctx2Space.strokeStyle = '#facc15';
+                ctx2Space.lineWidth = 2.5;
+                ctx2Space.stroke();
+                ctx2Space.fillStyle = '#facc15';
+                ctx2Space.font = '11px sans-serif';
+                ctx2Space.fillText('1 AU', sunX + orbitRx / 2, sunY - 6);
+
+                // E1 -> S, E2 -> S 기준 시선 (연하게)
+                ctx2Space.beginPath();
+                ctx2Space.moveTo(e1X, sunY);
+                ctx2Space.lineTo(starX, starY);
+                ctx2Space.moveTo(e2X, sunY);
+                ctx2Space.lineTo(starX, starY);
+                ctx2Space.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+                ctx2Space.lineWidth = 1.5;
+                ctx2Space.stroke();
+
+                // 연주시차 p 각도 표시 (태양-별-E2 사이 각도)
+                const pAngleRad = Math.atan(orbitRx / (sunY - starY));
+                ctx2Space.beginPath();
+                ctx2Space.moveTo(starX, starY);
+                ctx2Space.arc(starX, starY, 45, Math.PI / 2 - pAngleRad, Math.PI / 2);
+                ctx2Space.closePath();
+                ctx2Space.fillStyle = 'rgba(239, 68, 68, 0.45)';
+                ctx2Space.fill();
+
+                // 반대쪽 p 각도 표시 (전체 2p 시각적 대비)
+                ctx2Space.beginPath();
+                ctx2Space.moveTo(starX, starY);
+                ctx2Space.arc(starX, starY, 45, Math.PI / 2, Math.PI / 2 + pAngleRad);
+                ctx2Space.closePath();
+                ctx2Space.fillStyle = 'rgba(59, 130, 246, 0.35)';
+                ctx2Space.fill();
+
+                ctx2Space.fillStyle = '#fca5a5';
+                ctx2Space.font = 'bold 13px sans-serif';
+                ctx2Space.fillText(`연주시차 p`, starX + 42, starY + 55);
+                ctx2Space.fillStyle = '#93c5fd';
+                ctx2Space.fillText(`p`, starX - 16, starY + 55);
+            }
+
+            // 5. 현재 지구 위치 및 관측 시선
+            const earthX = sunX + Math.cos(earthAngle) * orbitRx;
+            const earthY = sunY + Math.sin(earthAngle) * orbitRy;
+
+            // 지구 -> 별 -> 배경 별 투영선
+            const slope = (starX - earthX) / (starY - earthY);
+            const projX = earthX + slope * (bgLineY - earthY);
+
+            ctx2Space.beginPath();
+            ctx2Space.moveTo(earthX, earthY);
+            ctx2Space.lineTo(projX, bgLineY);
+            ctx2Space.strokeStyle = '#38bdf8';
+            ctx2Space.lineWidth = 2.5;
+            ctx2Space.setLineDash([6, 4]);
+            ctx2Space.stroke();
+            ctx2Space.setLineDash([]);
+
+            // 배경에 투영된 겉보기 위치 마커
+            ctx2Space.beginPath();
+            ctx2Space.arc(projX, bgLineY, 6, 0, Math.PI * 2);
+            ctx2Space.fillStyle = '#f43f5e';
+            ctx2Space.fill();
+            ctx2Space.strokeStyle = '#ffffff';
+            ctx2Space.lineWidth = 1.5;
+            ctx2Space.stroke();
+
+            // 6. 관측 별(S) 그리기
+            ctx2Space.beginPath();
+            ctx2Space.arc(starX, starY, 9, 0, Math.PI * 2);
+            ctx2Space.fillStyle = '#f43f5e';
+            ctx2Space.fill();
+            ctx2Space.strokeStyle = '#ffe4e6';
+            ctx2Space.lineWidth = 2;
+            ctx2Space.stroke();
+
+            ctx2Space.fillStyle = '#ffffff';
+            ctx2Space.font = 'bold 13px sans-serif';
+            ctx2Space.fillText(`관측 별 S (${starDistancePc.toFixed(1)} pc)`, starX + 75, starY + 4);
+
+            // 7. 지구 그리기
+            ctx2Space.beginPath();
+            ctx2Space.arc(earthX, earthY, 9, 0, Math.PI * 2);
+            ctx2Space.fillStyle = '#2563eb';
+            ctx2Space.fill();
+            ctx2Space.strokeStyle = '#93c5fd';
+            ctx2Space.lineWidth = 2.5;
+            ctx2Space.stroke();
+
+            ctx2Space.fillStyle = '#bfdbfe';
+            ctx2Space.font = 'bold 12px sans-serif';
+            ctx2Space.fillText('지구', earthX, earthY - 14);
+
+            // 계절 배지 업데이트
+            const normAngle = ((earthAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+            let seasonText = '봄 (E₂ 부근)';
+            if (normAngle > Math.PI * 0.25 && normAngle <= Math.PI * 0.75) seasonText = '여름';
+            else if (normAngle > Math.PI * 0.75 && normAngle <= Math.PI * 1.25) seasonText = '가을 (E₁ 부근)';
+            else if (normAngle > Math.PI * 1.25 && normAngle <= Math.PI * 1.75) seasonText = '겨울';
+            document.getElementById('t2-season-badge').textContent = `공전 위치: ${seasonText}`;
+        }
+
+        function drawTelescopeView() {
+            const W = c2Scope.width;
+            const H = c2Scope.height;
+            ctx2Scope.clearRect(0, 0, W, H);
+
+            // 밤하늘 배경 및 망원경 십자선
+            ctx2Scope.fillStyle = '#090d16';
+            ctx2Scope.fillRect(0, 0, W, H);
+
+            // 배경 고정 별들 그리기
+            bgStars.forEach(s => {
+                const bx = Math.abs(s.xRatio) * (W - 40) + 20;
+                const by = Math.abs(s.yRatio) * (H - 40) + 20;
+                ctx2Scope.beginPath();
+                ctx2Scope.arc(bx, by, s.size, 0, Math.PI * 2);
+                ctx2Scope.fillStyle = 'rgba(255, 255, 255, 0.75)';
+                ctx2Scope.fill();
+            });
+
+            // 망원경 중심 기준 눈금
+            ctx2Scope.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+            ctx2Scope.lineWidth = 1;
+            ctx2Scope.beginPath();
+            ctx2Scope.moveTo(W / 2, 15);
+            ctx2Scope.lineTo(W / 2, H - 15);
+            ctx2Scope.moveTo(20, H / 2);
+            ctx2Scope.lineTo(W - 20, H / 2);
+            ctx2Scope.stroke();
+
+            // 가까운 별(S)의 겉보기 이동 계산
+            // 지구가 오른쪽(E2, cos=1)에 있으면 별은 왼쪽으로 치우쳐 보임
+            const maxShiftPx = 150 / starDistancePc; // 거리에 반비례하는 이동 폭
+            const apparentX = (W / 2) - Math.cos(earthAngle) * maxShiftPx;
+            const apparentY = (H / 2) + Math.sin(earthAngle) * (maxShiftPx * 0.15);
+
+            // 왕복 이동 궤적 범위 표시
+            ctx2Scope.beginPath();
+            ctx2Scope.moveTo(W / 2 - maxShiftPx, H / 2);
+            ctx2Scope.lineTo(W / 2 + maxShiftPx, H / 2);
+            ctx2Scope.strokeStyle = 'rgba(244, 63, 94, 0.5)';
+            ctx2Scope.lineWidth = 2;
+            ctx2Scope.setLineDash([4, 4]);
+            ctx2Scope.stroke();
+            ctx2Scope.setLineDash([]);
+
+            // E1, E2 관측 위치 표시점
+            ctx2Scope.fillStyle = '#93c5fd';
+            ctx2Scope.font = '11px sans-serif';
+            ctx2Scope.textAlign = 'center';
+            ctx2Scope.fillText('E₂에서 본 위치', W / 2 - maxShiftPx, H / 2 + 24);
+            ctx2Scope.fillText('E₁에서 본 위치', W / 2 + maxShiftPx, H / 2 + 24);
+
+            // 가까운 별 S 렌더링 (빛무리 효과)
+            const glow = ctx2Scope.createRadialGradient(apparentX, apparentY, 2, apparentX, apparentY, 16);
+            glow.addColorStop(0, '#ffffff');
+            glow.addColorStop(0.4, '#f43f5e');
+            glow.addColorStop(1, 'rgba(244, 63, 94, 0)');
+            ctx2Scope.fillStyle = glow;
+            ctx2Scope.beginPath();
+            ctx2Scope.arc(apparentX, apparentY, 16, 0, Math.PI * 2);
+            ctx2Scope.fill();
+
+            ctx2Scope.beginPath();
+            ctx2Scope.arc(apparentX, apparentY, 5, 0, Math.PI * 2);
+            ctx2Scope.fillStyle = '#fff1f2';
+            ctx2Scope.fill();
+
+            ctx2Scope.fillStyle = '#fda4af';
+            ctx2Scope.font = 'bold 12px sans-serif';
+            ctx2Scope.fillText('가까운 별 S', apparentX, apparentY - 14);
+
+            // 상단 안내 텍스트
+            ctx2Scope.fillStyle = '#cbd5e1';
+            ctx2Scope.font = '12px sans-serif';
+            ctx2Scope.textAlign = 'left';
+            ctx2Scope.fillText('배경 별들은 멈춰 있고, 가까운 별 S만 좌우로 왕복 운동합니다.', 14, 22);
+        }
+
+        /* =========================================================
+           탭 3: 거리와 연주시차 관계 탐구 & 그래프 & 퀴즈
+           ========================================================= */
+        let recordedPoints = [
+            { dist: 1.0, p: 1.00 },
+            { dist: 2.0, p: 0.50 },
+            { dist: 5.0, p: 0.20 }
+        ];
+
+        function updateTab3Slider(val) {
+            const d = parseFloat(val);
+            const p = (1 / d).toFixed(2);
+            document.getElementById('t3-dist-display').textContent = `${d.toFixed(1)} pc`;
+            document.getElementById('t3-calc-parallax').textContent = `${p}"`;
+        }
+
+        function recordDataPoint() {
+            const d = parseFloat(document.getElementById('t3-dist-slider').value);
+            const p = parseFloat((1 / d).toFixed(2));
+
+            // 중복 확인
+            if (recordedPoints.some(pt => pt.dist === d)) {
+                showToast('이미 기록된 거리 데이터입니다! 다른 거리를 선택해보세요.');
+                return;
+            }
+
+            recordedPoints.push({ dist: d, p: p });
+            recordedPoints.sort((a, b) => a.dist - b.dist);
+            renderDataTable();
+            drawTab3Graph();
+            showToast(`거리 ${d.toFixed(1)} pc, 연주시차 ${p}" 데이터가 기록되었습니다!`);
+        }
+
+        function resetTableData() {
+            recordedPoints = [];
+            renderDataTable();
+            drawTab3Graph();
+            showToast('관측 데이터 표가 초기화되었습니다.');
+        }
+
+        function renderDataTable() {
+            const tbody = document.getElementById('data-table-body');
+            tbody.innerHTML = '';
+
+            if (recordedPoints.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="color: #94a3b8; padding: 20px;">위 슬라이더로 거리를 조절하고 '관측 데이터 기록하기'를 눌러보세요!</td></tr>`;
+                return;
+            }
+
+            recordedPoints.forEach((pt, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>#${idx + 1}</td>
+                    <td><strong>${pt.dist.toFixed(1)} pc</strong></td>
+                    <td style="color: #dc2626; font-weight: 700;">${pt.p.toFixed(2)}"</td>
+                    <td>${(pt.dist * pt.p).toFixed(2)} (일정)</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function drawTab3Graph() {
+            const canvas = document.getElementById('canvasTab3Graph');
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width;
+            const H = canvas.height;
+            ctx.clearRect(0, 0, W, H);
+
+            const padL = 55;
+            const padR = 30;
+            const padT = 25;
+            const padB = 45;
+            const plotW = W - padL - padR;
+            const plotH = H - padT - padB;
+
+            // 배경 그리드 및 축
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+
+            // X축 눈금 (거리: 0 ~ 10 pc)
+            for (let d = 0; d <= 10; d += 2) {
+                const x = padL + (d / 10) * plotW;
+                ctx.beginPath();
+                ctx.moveTo(x, padT);
+                ctx.lineTo(x, H - padB);
+                ctx.stroke();
+
+                ctx.fillStyle = '#475569';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(d, x, H - padB + 18);
+            }
+
+            // Y축 눈금 (연주시차: 0 ~ 1.0")
+            for (let p = 0; p <= 1.01; p += 0.2) {
+                const y = (H - padB) - (p / 1.0) * plotH;
+                ctx.beginPath();
+                ctx.moveTo(padL, y);
+                ctx.lineTo(W - padR, y);
+                ctx.stroke();
+
+                ctx.fillStyle = '#475569';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(p.toFixed(1) + '"', padL - 8, y + 4);
+            }
+
+            // 축 제목
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('별까지의 거리 (pc)', padL + plotW / 2, H - 8);
+
+            ctx.save();
+            ctx.translate(16, padT + plotH / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('연주시차 (″)', 0, 0);
+            ctx.restore();
+
+            // 이론적 반비례 곡선 (점선 가이드: p = 1/d, d: 1.0 ~ 10.0)
+            ctx.beginPath();
+            for (let d = 1.0; d <= 10.0; d += 0.1) {
+                const p = 1 / d;
+                const x = padL + (d / 10) * plotW;
+                const y = (H - padB) - (p / 1.0) * plotH;
+                if (d === 1.0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = 'rgba(37, 99, 235, 0.35)';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 기록된 데이터 포인트 연결 및 점 찍기
+            if (recordedPoints.length > 0) {
+                ctx.beginPath();
+                recordedPoints.forEach((pt, idx) => {
+                    const x = padL + (pt.dist / 10) * plotW;
+                    const y = (H - padB) - (pt.p / 1.0) * plotH;
+                    if (idx === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                recordedPoints.forEach(pt => {
+                    const x = padL + (pt.dist / 10) * plotW;
+                    const y = (H - padB) - (pt.p / 1.0) * plotH;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#1e293b';
+                    ctx.font = 'bold 11px sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(`(${pt.dist}pc, ${pt.p}")`, x + 8, y - 6);
+                });
+            }
+        }
+
+        /* =========================================================
+           형성평가 퀴즈 인터랙션 로직
+           ========================================================= */
+        const quizExplanations = {
+            1: {
+                correct: '정답입니다! 🎉 물체가 관측자로부터 멀어질수록 두 시선이 이루는 각도(시차)는 작아집니다.',
+                wrong: '다시 생각해보세요! 물체가 멀리 있을수록 왼쪽 눈과 오른쪽 눈으로 볼 때 배경에서 움직이는 폭이 줄어들어 시차가 작아집니다.'
+            },
+            2: {
+                correct: '정답입니다! 🎉 연주시차는 6개월 간격으로 측정한 전체 시차(0.4″)의 절반(1/2)이므로 0.2″입니다.',
+                wrong: '아쉽네요! 연주시차의 정의를 떠올려보세요. 6개월 간격 관측 시차의 절반(1/2)이 연주시차입니다.'
+            },
+            3: {
+                correct: '정답입니다! 🎉 거리(pc) = 1 / 연주시차(″) 공식에 따라, 별 A는 1 / 0.5 = 2 pc, 별 B는 1 / 0.1 = 10 pc입니다.',
+                wrong: '공식을 적용해 보세요! 별까지의 거리(pc) = 1 ÷ 연주시차(″) 입니다. (1 ÷ 0.5 = 2, 1 ÷ 0.1 = 10)'
+            }
+        };
+
+        const solvedState = { 1: false, 2: false, 3: false };
+
+        function checkQuiz(qNum, optIdx, isCorrect) {
+            const qBox = document.getElementById(`q${qNum}`);
+            const buttons = qBox.querySelectorAll('.quiz-opt-btn');
+            const feedback = document.getElementById(`q${qNum}-feedback`);
+
+            buttons.forEach((btn, idx) => {
+                btn.classList.remove('correct', 'wrong');
+                if (idx === optIdx) {
+                    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
+            });
+
+            feedback.classList.add('show');
+            if (isCorrect) {
+                feedback.style.backgroundColor = '#dcfce7';
+                feedback.style.color = '#15803d';
+                feedback.textContent = quizExplanations[qNum].correct;
+                solvedState[qNum] = true;
+            } else {
+                feedback.style.backgroundColor = '#fee2e2';
+                feedback.style.color = '#b91c1c';
+                feedback.textContent = quizExplanations[qNum].wrong;
+            }
+
+            const solvedCount = Object.values(solvedState).filter(Boolean).length;
+            document.getElementById('quiz-score-badge').textContent = `맞힌 문제: ${solvedCount} / 3`;
+        }
+
+        /* =========================================================
+           메인 애니메이션 루프 및 초기화
+           ========================================================= */
+        let lastTime = 0;
+        function animateLoop(timestamp) {
+            const dt = (timestamp - lastTime) / 1000 || 0.016;
+            lastTime = timestamp;
+
+            // 탭 1: 번갈아 보기 애니메이션
+            if (currentTab === 1 && eyeMode === 'alt') {
+                altTimer += dt;
+                if (altTimer >= 1.1) {
+                    altTimer = 0;
+                    altEyeState = (altEyeState === 'left') ? 'right' : 'left';
+                    drawTab1();
+                }
+            }
+
+            // 탭 2: 지구 공전 애니메이션
+            if (currentTab === 2 && isOrbitPlaying) {
+                earthAngle += dt * 1.1; // 공전 속도
+                if (earthAngle >= Math.PI * 2) earthAngle -= Math.PI * 2;
+                const deg = Math.round((earthAngle * 180) / Math.PI);
+                document.getElementById('t2-orbit-slider').value = deg;
+                drawTab2();
+            }
+
+            requestAnimationFrame(animateLoop);
+        }
+
+        window.onload = function() {
+            updateTab1();
+            updateTab2Dist(2.0);
+            renderDataTable();
+            drawTab3Graph();
+            requestAnimationFrame(animateLoop);
+        };
+    </script>
+</body>
+</html>
