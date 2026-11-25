@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중2 과학: 거리에 따른 별의 밝기와 겉보기 등급 탐구실</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================================
+           기본 디자인 토큰 및 우주 다크 테마 설정
+           ========================================================= */
+        :root {
+            --bg-space: #070b19;
+            --bg-panel: #111827;
+            --bg-card: #1e293b;
+            --bg-card-hover: #273549;
+            --border-color: #334155;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.4);
+            --accent-gold: #fbbf24;
+            --accent-gold-glow: rgba(251, 191, 36, 0.45);
+            --accent-cyan: #38bdf8;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --text-main: #f8fafc;
+            --text-sub: #cbd5e1;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-space);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 1px, transparent 1.5px);
+            background-size: 180px 180px, 110px 110px;
+            background-position: 0 0, 45px 60px;
+        }
+
+        /* =========================================================
+           상단 헤더 및 네비게이션
+           ========================================================= */
+        header {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0.85) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 18px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .unit-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #93c5fd;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: 999px;
+            margin-bottom: 4px;
+        }
+
+        h1 {
+            font-size: 1.45rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tabs {
+            max-width: 1240px;
+            margin: 18px auto 0;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .tab-btn {
+            background: var(--bg-panel);
+            border: 2px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 1.02rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
+            background: var(--bg-card);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border-color: #60a5fa;
+            color: #ffffff;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        /* =========================================================
+           메인 컨텐츠 및 레이아웃 그리드
+           ========================================================= */
+        main {
+            max-width: 1240px;
+            margin: 20px auto 50px;
+            padding: 0 16px;
+        }
+
+        .tab-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid-main {
+            display: grid;
+            grid-template-columns: 1.45fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-equal {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 960px) {
+            .grid-main, .grid-equal {
+                grid-template-columns: 1fr;
+            }
+            .nav-tabs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* =========================================================
+           카드 및 공통 UI 컴포넌트
+           ========================================================= */
+        .card {
+            background: rgba(17, 24, 39, 0.92);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .canvas-wrapper {
+            background: #050811;
+            border: 1px solid #283548;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .control-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 0.96rem;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .pill-badge {
+            background: rgba(251, 191, 36, 0.18);
+            border: 1px solid rgba(251, 191, 36, 0.5);
+            color: var(--accent-gold);
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 75px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #0f172a;
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+        }
+
+        .btn.active {
+            background: var(--primary);
+            border-color: #60a5fa;
+            color: #ffffff;
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .btn-gold.active {
+            background: #d97706;
+            border-color: var(--accent-gold);
+            color: #ffffff;
+            box-shadow: 0 0 12px var(--accent-gold-glow);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: #0f172a;
+            border-radius: 6px;
+            outline: none;
+            -webkit-appearance: none;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 10px var(--accent-gold-glow);
+            cursor: pointer;
+        }
+
+        /* 지표 카드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .stat-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        .stat-title {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-num {
+            font-size: 1.35rem;
+            font-weight: 900;
+            margin-top: 4px;
+            color: var(--accent-cyan);
+        }
+
+        /* 핵심 개념 박스 */
+        .concept-callout {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.35) 0%, rgba(15, 23, 42, 0.7) 100%);
+            border-left: 4px solid var(--accent-gold);
+            border-radius: 10px;
+            padding: 15px 18px;
+            margin-top: 14px;
+        }
+
+        .concept-callout h4 {
+            color: var(--accent-gold);
+            font-size: 1.02rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .concept-callout p, .concept-callout li {
+            font-size: 0.93rem;
+            color: var(--text-sub);
+        }
+
+        /* 데이터 테이블 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        tr:hover td {
+            background: rgba(51, 65, 85, 0.3);
+        }
+
+        /* =========================================================
+           2단계 전용: 등급 비교 수직선 및 시각 비교 패널
+           ========================================================= */
+        .star-compare-stage {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 12px;
+            background: #050811;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px 14px;
+            margin-bottom: 16px;
+        }
+
+        .star-orb-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 155px;
+        }
+
+        .star-orb {
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffffff 15%, #fde047 50%, rgba(251, 191, 36, 0) 75%);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-bottom: 12px;
+        }
+
+        .calc-result-banner {
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15));
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        /* =========================================================
+           3단계 전용: 퀴즈 스타일
+           ========================================================= */
+        .quiz-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+
+        .quiz-q {
+            font-weight: 700;
+            font-size: 1.02rem;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .quiz-opts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        @media (max-width: 640px) {
+            .quiz-opts { grid-template-columns: 1fr; }
+        }
+
+        .opt-btn {
+            background: #0f172a;
+            border: 1.5px solid var(--border-color);
+            color: var(--text-sub);
+            padding: 11px 14px;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 0.94rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .opt-btn:hover {
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .opt-btn.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--accent-emerald);
+            color: #6ee7b7;
+        }
+
+        .opt-btn.wrong {
+            background: rgba(244, 63, 94, 0.2);
+            border-color: var(--accent-rose);
+            color: #fda4af;
+        }
+
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2563eb;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 999px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+            z-index: 999;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 상단 헤더 -->
+    <header>
+        <div class="header-inner">
+            <div>
+                <span class="unit-badge">2022 개정 교육과정 · 중학교 2학년 과학 8단원 (별과 우주)</span>
+                <h1>✨ 거리에 따른 별의 밝기와 겉보기 등급 탐구실</h1>
+            </div>
+            <div style="font-size: 0.9rem; color: var(--text-sub);">
+                별의 밝기는 거리와 어떤 관계가 있을까? 등급은 어떻게 정할까?
+            </div>
+        </div>
+    </header>
+
+    <!-- 3단계 학습 탭 -->
+    <nav class="nav-tabs" role="tablist">
+        <button class="tab-btn active" id="tab-btn-1" onclick="switchTab(1)">
+            <span>🔦 1단계: 거리에 따른 별의 밝기</span>
+        </button>
+        <button class="tab-btn" id="tab-btn-2" onclick="switchTab(2)">
+            <span>⭐ 2단계: 별의 등급과 밝기 비교</span>
+        </button>
+        <button class="tab-btn" id="tab-btn-3" onclick="switchTab(3)">
+            <span>🔭 3단계: 겉보기 등급 & 형성평가</span>
+        </button>
+    </nav>
+
+    <main>
+        <!-- =========================================================
+             [1단계] 거리에 따른 별의 밝기 변화 (빛의 퍼짐 시뮬레이션)
+             ========================================================= -->
+        <section id="tab-1" class="tab-section active">
+            <div class="grid-main">
+                <!-- 왼쪽: 3D 투시 빛의 퍼짐 캔버스 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🔦 빛이 퍼지는 면적과 밝기 시뮬레이션</div>
+                        <button class="btn active" id="btn-grid-toggle" onclick="toggleGridOverlay()" style="flex: none; padding: 6px 12px; font-size: 0.85rem;">
+                            📏 단위 면적 격자: ON
+                        </button>
+                    </div>
+
+                    <div class="canvas-wrapper">
+                        <canvas id="canvasStep1" width="720" height="420"></canvas>
+                    </div>
+
+                    <!-- 실시간 수치 대시보드 -->
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-title">광원으로부터의 거리</div>
+                            <div class="stat-num" id="s1-dist-val">1 배</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-title">빛이 비추는 전체 넓이</div>
+                            <div class="stat-num" style="color: var(--accent-gold);" id="s1-area-val">1 칸 (1²)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-title">단위 면적당 밝기</div>
+                            <div class="stat-num" style="color: var(--accent-emerald);" id="s1-bright-val">1 배 (1/1²)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 조작 패널 + 그래프 + 핵심 정리 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🎛️ 거리 조절 및 밝기 변화 그래프</div>
+                    </div>
+
+                    <div class="control-box">
+                        <div class="control-label">
+                            <span>별(광원)과 관측자 사이의 거리 선택</span>
+                            <span class="pill-badge" id="s1-dist-badge">거리 = 1배 (기준)</span>
+                        </div>
+                        <div class="btn-row" style="margin-bottom: 12px;">
+                            <button class="btn btn-gold active" id="dist-btn-1" onclick="setStep1Dist(1)">1배 거리</button>
+                            <button class="btn btn-gold" id="dist-btn-2" onclick="setStep1Dist(2)">2배 거리</button>
+                            <button class="btn btn-gold" id="dist-btn-3" onclick="setStep1Dist(3)">3배 거리</button>
+                            <button class="btn btn-gold" id="dist-btn-4" onclick="setStep1Dist(4)">4배 거리</button>
+                        </div>
+                        <input type="range" id="s1-slider" min="1" max="4" step="1" value="1" oninput="setStep1Dist(parseInt(this.value))">
+                    </div>
+
+                    <!-- 거리-밝기 반비례 그래프 캔버스 -->
+                    <div class="canvas-wrapper" style="margin-bottom: 14px;">
+                        <canvas id="canvasStep1Graph" width="460" height="190"></canvas>
+                    </div>
+
+                    <div class="concept-callout">
+                        <h4>💡 핵심 원리: 별의 밝기는 거리의 제곱에 반비례!</h4>
+                        <p style="margin-bottom: 6px;">
+                            별에서 나온 빛은 사방으로 퍼져 나갑니다. 거리가 멀어질수록 같은 양의 빛이 더 넓은 면적에 나누어 비추게 됩니다.
+                        </p>
+                        <ul style="padding-left: 18px;">
+                            <li>거리가 <strong>2배</strong> 멀어지면 ➔ 빛이 퍼지는 넓이 <strong>4배</strong> ➔ 밝기는 <strong>1/4배</strong></li>
+                            <li>거리가 <strong>3배</strong> 멀어지면 ➔ 빛이 퍼지는 넓이 <strong>9배</strong> ➔ 밝기는 <strong>1/9배</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             [2단계] 별의 등급 개념 익히기 (히파르코스 등급 체계 & 계산기)
+             ========================================================= -->
+        <section id="tab-2" class="tab-section">
+            <div class="grid-main">
+                <!-- 왼쪽: 인터랙티브 등급 비교 실험실 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">⚖️ 별의 등급 & 밝기 배율 비교 실험실</div>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">두 별의 등급을 선택해 밝기 차이를 확인하세요</span>
+                    </div>
+
+                    <!-- 시각적 별 밝기 비교 무대 -->
+                    <div class="star-compare-stage">
+                        <div class="star-orb-box">
+                            <div class="star-orb" id="orb-star-a" style="width: 90px; height: 90px;"></div>
+                            <div style="font-weight: 900; font-size: 1.1rem; color: var(--accent-gold);" id="label-star-a">별 A : 1등급</div>
+                            <div style="font-size: 0.82rem; color: var(--text-muted);" id="desc-star-a">1등성</div>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">등급 차이</div>
+                            <div style="font-size: 1.5rem; font-weight: 900; color: var(--accent-cyan);" id="mag-diff-badge">5등급 차이</div>
+                            <div style="font-size: 1.3rem; margin: 4px 0;">⚡</div>
+                        </div>
+
+                        <div class="star-orb-box">
+                            <div class="star-orb" id="orb-star-b" style="width: 24px; height: 24px;"></div>
+                            <div style="font-weight: 900; font-size: 1.1rem; color: #cbd5e1;" id="label-star-b">별 B : 6등급</div>
+                            <div style="font-size: 0.82rem; color: var(--text-muted);" id="desc-star-b">맨눈 한계</div>
+                        </div>
+                    </div>
+
+                    <!-- 등급 조절 슬라이더 2개 -->
+                    <div class="grid-equal" style="gap: 12px;">
+                        <div class="control-box" style="margin-bottom: 0;">
+                            <div class="control-label">
+                                <span>🌟 별 A 등급 선택</span>
+                                <span class="pill-badge" id="s2-mag-a-val">1 등급</span>
+                            </div>
+                            <input type="range" id="s2-slider-a" min="-2" max="6" step="1" value="1" oninput="updateStep2()">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">
+                                <span>-2등급 (매우 밝음)</span>
+                                <span>+6등급 (어두움)</span>
+                            </div>
+                        </div>
+
+                        <div class="control-box" style="margin-bottom: 0;">
+                            <div class="control-label">
+                                <span>⭐ 별 B 등급 선택</span>
+                                <span class="pill-badge" id="s2-mag-b-val">6 등급</span>
+                            </div>
+                            <input type="range" id="s2-slider-b" min="-2" max="6" step="1" value="6" oninput="updateStep2()">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">
+                                <span>-2등급 (매우 밝음)</span>
+                                <span>+6등급 (어두움)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 빠른 프리셋 버튼 -->
+                    <div class="btn-row" style="margin-top: 12px;">
+                        <button class="btn" onclick="setStep2Preset(1, 2)">1등급 vs 2등급 (1등급 차)</button>
+                        <button class="btn" onclick="setStep2Preset(1, 6)">1등급 vs 6등급 (5등급 차)</button>
+                        <button class="btn" onclick="setStep2Preset(-1, 4)">-1등급 vs 4등급 (5등급 차)</button>
+                    </div>
+
+                    <!-- 계산 결과 배너 -->
+                    <div class="calc-result-banner" style="margin-top: 14px;">
+                        <div style="font-size: 1.05rem; font-weight: 700; color: #ffffff;" id="s2-result-main">
+                            별 A(1등급)는 별 B(6등급)보다 약 <span style="color: var(--accent-gold); font-size: 1.3rem;">100배</span> 더 밝습니다!
+                        </div>
+                        <div style="font-size: 0.88rem; color: var(--text-sub); margin-top: 4px;" id="s2-result-formula">
+                            계산 과정: 5등급 차이 = 2.5 × 2.5 × 2.5 × 2.5 × 2.5 = 2.5⁵ ≈ 100배
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 히파르코스 등급 체계 설명 + 등급 차이 표 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">📜 별의 등급 체계와 100배의 법칙</div>
+                    </div>
+
+                    <div class="concept-callout" style="margin-top: 0; margin-bottom: 14px;">
+                        <h4>🏛️ 히파르코스가 정한 별의 등급</h4>
+                        <p style="margin-bottom: 6px;">
+                            고대 그리스의 과학자 히파르코스는 맨눈으로 보이는 별 중 <strong>가장 밝은 별을 1등급</strong>, <strong>가장 어두운 별을 6등급</strong>으로 나누었습니다.
+                        </p>
+                        <ul style="padding-left: 18px;">
+                            <li><strong>등급 숫자가 작을수록</strong> 밝은 별, <strong>클수록</strong> 어두운 별입니다.</li>
+                            <li>현대에는 1등급보다 더 밝은 천체를 <strong>0등급, 음수(-) 등급</strong>으로 나타냅니다. (예: 태양 -26.8등급, 시리우스 -1.5등급)</li>
+                        </ul>
+                    </div>
+
+                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--accent-cyan); margin-bottom: 6px;">
+                        📊 등급 차이에 따른 밝기 배율 (1등급 차 = 약 2.5배)
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>등급 차이</th>
+                                <th>계산 식</th>
+                                <th>밝기 배율</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1등급 차이</strong></td>
+                                <td>2.5¹</td>
+                                <td style="color: var(--accent-gold); font-weight: 700;">약 2.5배</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2등급 차이</strong></td>
+                                <td>2.5 × 2.5 (2.5²)</td>
+                                <td style="color: var(--accent-gold); font-weight: 700;">약 6.3배</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3등급 차이</strong></td>
+                                <td>2.5 × 2.5 × 2.5 (2.5³)</td>
+                                <td style="color: var(--accent-gold); font-weight: 700;">약 16배</td>
+                            </tr>
+                            <tr>
+                                <td><strong>4등급 차이</strong></td>
+                                <td>2.5⁴</td>
+                                <td style="color: var(--accent-gold); font-weight: 700;">약 40배</td>
+                            </tr>
+                            <tr style="background: rgba(251, 191, 36, 0.1);">
+                                <td><strong>5등급 차이</strong></td>
+                                <td>2.5⁵</td>
+                                <td style="color: #fbbf24; font-weight: 900; font-size: 1.05rem;">100배 (기준!)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             [3단계] 겉보기 등급 탐구 & 형성평가 퀴즈
+             ========================================================= -->
+        <section id="tab-3" class="tab-section">
+            <div class="grid-main" style="margin-bottom: 22px;">
+                <!-- 왼쪽: 겉보기 등급 시뮬레이션 캔버스 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🌍 지구에서 본 밤하늘: 겉보기 등급 실험실</div>
+                        <span class="pill-badge" id="s3-star-name-badge">실제 별 비교 모드</span>
+                    </div>
+
+                    <div class="canvas-wrapper">
+                        <canvas id="canvasStep3" width="720" height="390"></canvas>
+                    </div>
+
+                    <div class="concept-callout">
+                        <h4>💡 겉보기 등급(Apparent Magnitude)이란?</h4>
+                        <p>
+                            별까지의 <strong>실제 거리를 고려하지 않고, 지구에서 맨눈으로 보았을 때 느껴지는 밝기</strong>를 기준으로 정한 등급입니다. 따라서 실제로는 어두운 별이라도 지구에 매우 가까우면 겉보기 등급이 작게(밝게) 보입니다!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 겉보기 등급 실험 컨트롤 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🎛️ 관측 조건 및 별 거리 바꾸기</div>
+                    </div>
+
+                    <div class="control-box">
+                        <div class="control-label">
+                            <span>1. 탐색 모드 선택</span>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn active" id="btn-mode-real" onclick="setStep3Mode('real')">🌌 대표 천체 3종 비교</button>
+                            <button class="btn" id="btn-mode-move" onclick="setStep3Mode('move')">🚀 별 거리 이동 실험</button>
+                        </div>
+                    </div>
+
+                    <!-- 모드 A: 대표 천체 비교 설명 -->
+                    <div id="panel-mode-real">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>천체 이름</th>
+                                    <th>지구까지 거리</th>
+                                    <th>겉보기 등급</th>
+                                    <th>특징</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>☀️ 태양</strong></td>
+                                    <td>약 8분 광속 거리</td>
+                                    <td style="color: var(--accent-gold); font-weight: 900;">-26.8등급</td>
+                                    <td>가장 가까워 최고 밝음</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>✨ 시리우스</strong></td>
+                                    <td>약 8.6 광년</td>
+                                    <td style="color: var(--accent-cyan); font-weight: 900;">-1.5등급</td>
+                                    <td>밤하늘에서 가장 밝은 별</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>🔥 베텔게우스</strong></td>
+                                    <td>약 640 광년</td>
+                                    <td style="color: #fda4af; font-weight: 900;">+0.5등급</td>
+                                    <td>실제는 엄청 밝지만 매우 멈</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 10px;">
+                            * 겉보기 등급만으로는 어떤 별이 <strong>실제로 더 많은 빛을 내는지</strong> 알 수 없습니다!
+                        </p>
+                    </div>
+
+                    <!-- 모드 B: 별 거리 이동 슬라이더 -->
+                    <div id="panel-mode-move" style="display: none;">
+                        <div class="control-box" style="margin-bottom: 12px;">
+                            <div class="control-label">
+                                <span>별을 지구에서 멀리 이동시켜 보세요!</span>
+                                <span class="pill-badge" id="s3-move-dist-val">거리: 10 pc (기준)</span>
+                            </div>
+                            <input type="range" id="s3-move-slider" min="10" max="100" step="5" value="10" oninput="updateStep3Move(this.value)">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">
+                                <span>가까움 (10 pc)</span>
+                                <span>중간 (40 pc)</span>
+                                <span>매우 멈 (100 pc)</span>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+                            <div class="stat-item">
+                                <div class="stat-title">현재 지구까지의 거리</div>
+                                <div class="stat-num" id="s3-stat-dist">10 pc</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-title">측정된 겉보기 등급</div>
+                                <div class="stat-num" style="color: var(--accent-gold);" id="s3-stat-mag">1.0 등급</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--text-sub); margin-top: 10px;">
+                            * 같은 별이라도 거리가 <strong>10배(10 pc → 100 pc)</strong> 멀어지면 밝기가 <strong>1/100배</strong>가 되어 겉보기 등급이 <strong>5등급 커집니다(1.0등급 → 6.0등급)</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 하단: 형성평가 퀴즈 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">✍️ 배운 내용 확인하기 (형성평가 퀴즈)</div>
+                    <span class="pill-badge" id="quiz-score-text">정답 수: 0 / 3</span>
+                </div>
+
+                <!-- 문제 1 -->
+                <div class="quiz-card" id="q-box-1">
+                    <div class="quiz-q">Q1. 어떤 별까지의 거리가 현재보다 3배 멀어진다면, 지구에서 관측되는 이 별의 밝기는 현재의 몇 배가 될까요?</div>
+                    <div class="quiz-opts">
+                        <button class="opt-btn" onclick="answerQuiz(1, 0, false)">① 3배</button>
+                        <button class="opt-btn" onclick="answerQuiz(1, 1, false)">② 1/3배</button>
+                        <button class="opt-btn" onclick="answerQuiz(1, 2, false)">③ 1/6배</button>
+                        <button class="opt-btn" onclick="answerQuiz(1, 3, true)">④ 1/9배</button>
+                    </div>
+                    <div class="quiz-feedback" id="q-fb-1"></div>
+                </div>
+
+                <!-- 문제 2 -->
+                <div class="quiz-card" id="q-box-2">
+                    <div class="quiz-q">Q2. 겉보기 등급이 1등급인 별은 4등급인 별보다 약 몇 배 더 밝게 보일까요? (단, 1등급 차이는 약 2.5배로 계산한다.)</div>
+                    <div class="quiz-opts">
+                        <button class="opt-btn" onclick="answerQuiz(2, 0, false)">① 3배</button>
+                        <button class="opt-btn" onclick="answerQuiz(2, 1, false)">② 7.5배</button>
+                        <button class="opt-btn" onclick="answerQuiz(2, 2, true)">③ 16배</button>
+                        <button class="opt-btn" onclick="answerQuiz(2, 3, false)">④ 100배</button>
+                    </div>
+                    <div class="quiz-feedback" id="q-fb-2"></div>
+                </div>
+
+                <!-- 문제 3 -->
+                <div class="quiz-card" id="q-box-3" style="margin-bottom: 0;">
+                    <div class="quiz-q">Q3. 다음 중 '겉보기 등급'에 대한 설명으로 옳은 것은?</div>
+                    <div class="quiz-opts">
+                        <button class="opt-btn" onclick="answerQuiz(3, 0, false)">① 모든 별을 같은 거리에 놓았을 때의 밝기이다.</button>
+                        <button class="opt-btn" onclick="answerQuiz(3, 1, true)">② 지구에서 눈으로 보았을 때의 밝기를 기준으로 정한 등급이다.</button>
+                        <button class="opt-btn" onclick="answerQuiz(3, 2, false)">③ 겉보기 등급 숫자가 클수록 더 밝게 보이는 별이다.</button>
+                        <button class="opt-btn" onclick="answerQuiz(3, 3, false)">④ 겉보기 등급이 작을수록 실제로 더 큰 별이다.</button>
+                    </div>
+                    <div class="quiz-feedback" id="q-fb-3"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast" id="toastMsg">알림</div>
+
+    <script>
+        /* =========================================================
+           공통 유틸리티 및 탭 전환 로직
+           ========================================================= */
+        let currentTab = 1;
+
+        function showToast(msg) {
+            const el = document.getElementById('toastMsg');
+            el.textContent = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 2200);
+        }
+
+        function switchTab(num) {
+            currentTab = num;
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx + 1 === num);
+            });
+            document.querySelectorAll('.tab-section').forEach((sec, idx) => {
+                sec.classList.toggle('active', idx + 1 === num);
+            });
+
+            if (num === 1) {
+                drawStep1Scene();
+                drawStep1Graph();
+            } else if (num === 2) {
+                updateStep2();
+            } else if (num === 3) {
+                drawStep3Scene();
+            }
+        }
+
+        /* =========================================================
+           [1단계] 거리에 따른 별의 밝기 변화 (빛의 퍼짐 시뮬레이션)
+           ========================================================= */
+        const c1 = document.getElementById('canvasStep1');
+        const ctx1 = c1.getContext('2d');
+        const c1Graph = document.getElementById('canvasStep1Graph');
+        const ctx1G = c1Graph.getContext('2d');
+
+        let s1Dist = 1; // 1 ~ 4배
+        let showGridOverlay = true;
+
+        function toggleGridOverlay() {
+            showGridOverlay = !showGridOverlay;
+            const btn = document.getElementById('btn-grid-toggle');
+            btn.textContent = `📏 단위 면적 격자: ${showGridOverlay ? 'ON' : 'OFF'}`;
+            btn.classList.toggle('active', showGridOverlay);
+            drawStep1Scene();
+        }
+
+        function setStep1Dist(d) {
+            s1Dist = d;
+            document.getElementById('s1-slider').value = d;
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`dist-btn-${i}`).classList.toggle('active', i === d);
+            }
+
+            const area = d * d;
+            document.getElementById('s1-dist-badge').textContent = `거리 = ${d}배${d === 1 ? ' (기준)' : ''}`;
+            document.getElementById('s1-dist-val').textContent = `${d} 배`;
+            document.getElementById('s1-area-val').textContent = `${area} 칸 (${d}²)`;
+            document.getElementById('s1-bright-val').textContent = d === 1 ? `1 배 (기준)` : `1/${area} 배 (1/${d}²)`;
+
+            drawStep1Scene();
+            drawStep1Graph();
+        }
+
+        function drawStep1Scene() {
+            const W = c1.width;
+            const H = c1.height;
+            ctx1.clearRect(0, 0, W, H);
+
+            // 배경 그라데이션
+            const bgGrad = ctx1.createLinearGradient(0, 0, W, 0);
+            bgGrad.addColorStop(0, '#090f24');
+            bgGrad.addColorStop(1, '#040711');
+            ctx1.fillStyle = bgGrad;
+            ctx1.fillRect(0, 0, W, H);
+
+            // 왼쪽 광원(별) 위치
+            const srcX = 75;
+            const srcY = H / 2;
+
+            // 거리 눈금 바닥선
+            const baseY = H - 38;
+            ctx1.strokeStyle = '#334155';
+            ctx1.lineWidth = 2;
+            ctx1.beginPath();
+            ctx1.moveTo(srcX, baseY);
+            ctx1.lineTo(W - 40, baseY);
+            ctx1.stroke();
+
+            // 1배, 2배, 3배, 4배 기준점 X좌표
+            const stepX = 145;
+            for (let i = 1; i <= 4; i++) {
+                const gx = srcX + i * stepX;
+                ctx1.beginPath();
+                ctx1.moveTo(gx, baseY - 6);
+                ctx1.lineTo(gx, baseY + 6);
+                ctx1.strokeStyle = i === s1Dist ? '#fbbf24' : '#64748b';
+                ctx1.lineWidth = i === s1Dist ? 3 : 1.5;
+                ctx1.stroke();
+
+                ctx1.fillStyle = i === s1Dist ? '#fbbf24' : '#94a3b8';
+                ctx1.font = i === s1Dist ? 'bold 13px sans-serif' : '12px sans-serif';
+                ctx1.textAlign = 'center';
+                ctx1.fillText(`${i}배 거리`, gx, baseY + 22);
+            }
+
+            // 현재 선택된 스크린 위치 및 정사각형 한 변의 크기 (투시 효과 포함)
+            const screenX = srcX + s1Dist * stepX;
+            const unitSize = 48; // 1배 거리일 때 정사각형 한 변 길이
+            const boxSize = unitSize * s1Dist;
+            const halfBox = boxSize / 2;
+
+            // 빛 원뿔(피라미드) 빔 그리기
+            const coneGrad = ctx1.createLinearGradient(srcX, srcY, screenX, srcY);
+            coneGrad.addColorStop(0, 'rgba(251, 191, 36, 0.55)');
+            coneGrad.addColorStop(1, `rgba(251, 191, 36, ${0.28 / Math.sqrt(s1Dist)})`);
+
+            ctx1.beginPath();
+            ctx1.moveTo(srcX, srcY);
+            ctx1.lineTo(screenX - 18, srcY - halfBox - 12);
+            ctx1.lineTo(screenX + 18, srcY + halfBox + 12);
+            ctx1.lineTo(srcX, srcY);
+            ctx1.fillStyle = coneGrad;
+            ctx1.fill();
+
+            // 비스듬한 입체 스크린(평행사변형) 그리기
+            const skewX = 18;
+            const skewY = 12;
+            const p1 = { x: screenX - skewX, y: srcY - halfBox - skewY };
+            const p2 = { x: screenX + skewX, y: srcY - halfBox + skewY };
+            const p3 = { x: screenX + skewX, y: srcY + halfBox + skewY };
+            const p4 = { x: screenX - skewX, y: srcY + halfBox - skewY };
+
+            // 광선 테두리 4개
+            ctx1.strokeStyle = 'rgba(253, 224, 71, 0.45)';
+            ctx1.lineWidth = 1.5;
+            ctx1.setLineDash([5, 4]);
+            [p1, p2, p3, p4].forEach(pt => {
+                ctx1.beginPath();
+                ctx1.moveTo(srcX, srcY);
+                ctx1.lineTo(pt.x, pt.y);
+                ctx1.stroke();
+            });
+            ctx1.setLineDash([]);
+
+            // 스크린 면 채우기 (밝기는 1 / d^2 에 비례하여 투명도 조절)
+            const alpha = Math.max(0.14, 0.92 / (s1Dist * s1Dist));
+            ctx1.beginPath();
+            ctx1.moveTo(p1.x, p1.y);
+            ctx1.lineTo(p2.x, p2.y);
+            ctx1.lineTo(p3.x, p3.y);
+            ctx1.lineTo(p4.x, p4.y);
+            ctx1.closePath();
+            ctx1.fillStyle = `rgba(253, 224, 71, ${alpha})`;
+            ctx1.fill();
+            ctx1.strokeStyle = '#fbbf24';
+            ctx1.lineWidth = 2.5;
+            ctx1.stroke();
+
+            // 단위 면적 격자 나누기 (d x d 칸)
+            if (showGridOverlay && s1Dist > 1) {
+                ctx1.strokeStyle = 'rgba(15, 23, 42, 0.65)';
+                ctx1.lineWidth = 1.5;
+                for (let k = 1; k < s1Dist; k++) {
+                    const t = k / s1Dist;
+                    // 세로 분할선
+                    const topX = p1.x + (p2.x - p1.x) * t;
+                    const topY = p1.y + (p2.y - p1.y) * t;
+                    const botX = p4.x + (p3.x - p4.x) * t;
+                    const botY = p4.y + (p3.y - p4.y) * t;
+                    ctx1.beginPath();
+                    ctx1.moveTo(topX, topY);
+                    ctx1.lineTo(botX, botY);
+                    ctx1.stroke();
+
+                    // 가로 분할선
+                    const leftX = p1.x + (p4.x - p1.x) * t;
+                    const leftY = p1.y + (p4.y - p1.y) * t;
+                    const rightX = p2.x + (p3.x - p2.x) * t;
+                    const rightY = p2.y + (p3.y - p2.y) * t;
+                    ctx1.beginPath();
+                    ctx1.moveTo(leftX, leftY);
+                    ctx1.lineTo(rightX, rightY);
+                    ctx1.stroke();
+                }
+            }
+
+            // 각 칸에 밝기 분수 표기 (1배~3배까지만 깔끔하게 표시)
+            if (showGridOverlay && s1Dist <= 3) {
+                ctx1.fillStyle = s1Dist === 1 ? '#0f172a' : '#fef08a';
+                ctx1.font = 'bold 12px sans-serif';
+                ctx1.textAlign = 'center';
+                for (let r = 0; r < s1Dist; r++) {
+                    for (let c = 0; c < s1Dist; c++) {
+                        const u = (c + 0.5) / s1Dist;
+                        const v = (r + 0.5) / s1Dist;
+                        const cx = (1 - u) * (1 - v) * p1.x + u * (1 - v) * p2.x + u * v * p3.x + (1 - u) * v * p4.x;
+                        const cy = (1 - u) * (1 - v) * p1.y + u * (1 - v) * p2.y + u * v * p3.y + (1 - u) * v * p4.y;
+                        ctx1.fillText(s1Dist === 1 ? '1' : `1/${s1Dist * s1Dist}`, cx, cy + 4);
+                    }
+                }
+            }
+
+            // 스크린 상단 설명 라벨
+            ctx1.fillStyle = '#ffffff';
+            ctx1.font = 'bold 13px sans-serif';
+            ctx1.textAlign = 'center';
+            ctx1.fillText(`면적: ${s1Dist * s1Dist}칸 (${s1Dist}×${s1Dist})`, screenX, p1.y - 12);
+
+            // 광원(별) 그리기
+            const starGlow = ctx1.createRadialGradient(srcX, srcY, 4, srcX, srcY, 36);
+            starGlow.addColorStop(0, '#ffffff');
+            starGlow.addColorStop(0.4, '#fbbf24');
+            starGlow.addColorStop(1, 'rgba(251, 191, 36, 0)');
+            ctx1.fillStyle = starGlow;
+            ctx1.beginPath();
+            ctx1.arc(srcX, srcY, 36, 0, Math.PI * 2);
+            ctx1.fill();
+
+            ctx1.beginPath();
+            ctx1.arc(srcX, srcY, 12, 0, Math.PI * 2);
+            ctx1.fillStyle = '#fef9c3';
+            ctx1.fill();
+
+            ctx1.fillStyle = '#fde047';
+            ctx1.font = 'bold 13px sans-serif';
+            ctx1.fillText('별(광원)', srcX, srcY + 46);
+        }
+
+        function drawStep1Graph() {
+            const W = c1Graph.width;
+            const H = c1Graph.height;
+            ctx1G.clearRect(0, 0, W, H);
+
+            const padL = 52, padR = 24, padT = 22, padB = 36;
+            const plotW = W - padL - padR;
+            const plotH = H - padT - padB;
+
+            // 그리드 및 축
+            ctx1G.strokeStyle = '#1e293b';
+            ctx1G.lineWidth = 1;
+            for (let yVal = 0; yVal <= 1.0; yVal += 0.25) {
+                const y = (H - padB) - yVal * plotH;
+                ctx1G.beginPath();
+                ctx1G.moveTo(padL, y);
+                ctx1G.lineTo(W - padR, y);
+                ctx1G.stroke();
+
+                ctx1G.fillStyle = '#94a3b8';
+                ctx1G.font = '11px sans-serif';
+                ctx1G.textAlign = 'right';
+                ctx1G.fillText(yVal === 1 ? '1' : (yVal === 0 ? '0' : yVal.toFixed(2)), padL - 8, y + 4);
+            }
+
+            // 곡선 (y = 1 / x^2, x: 1 ~ 4)
+            ctx1G.beginPath();
+            for (let d = 1.0; d <= 4.0; d += 0.05) {
+                const x = padL + ((d - 0.5) / 3.8) * plotW;
+                const y = (H - padB) - (1 / (d * d)) * plotH;
+                if (d === 1.0) ctx1G.moveTo(x, y);
+                else ctx1G.lineTo(x, y);
+            }
+            ctx1G.strokeStyle = '#38bdf8';
+            ctx1G.lineWidth = 2.5;
+            ctx1G.stroke();
+
+            // 1~4배 포인트 및 현재 선택 포인트 강조
+            for (let d = 1; d <= 4; d++) {
+                const x = padL + ((d - 0.5) / 3.8) * plotW;
+                const y = (H - padB) - (1 / (d * d)) * plotH;
+
+                ctx1G.fillStyle = '#94a3b8';
+                ctx1G.font = '11px sans-serif';
+                ctx1G.textAlign = 'center';
+                ctx1G.fillText(`${d}배`, x, H - padB + 16);
+
+                ctx1G.beginPath();
+                ctx1G.arc(x, y, d === s1Dist ? 7 : 4, 0, Math.PI * 2);
+                ctx1G.fillStyle = d === s1Dist ? '#fbbf24' : '#38bdf8';
+                ctx1G.fill();
+
+                if (d === s1Dist) {
+                    ctx1G.strokeStyle = '#ffffff';
+                    ctx1G.lineWidth = 2;
+                    ctx1G.stroke();
+                    ctx1G.fillStyle = '#fbbf24';
+                    ctx1G.font = 'bold 11px sans-serif';
+                    ctx1G.fillText(d === 1 ? '밝기 1' : `밝기 1/${d * d}`, x, y - 12);
+                }
+            }
+
+            ctx1G.fillStyle = '#cbd5e1';
+            ctx1G.font = 'bold 11px sans-serif';
+            ctx1G.textAlign = 'center';
+            ctx1G.fillText('광원으로부터의 거리 (배)', padL + plotW / 2, H - 5);
+        }
+
+        /* =========================================================
+           [2단계] 별의 등급과 밝기 비교 로직
+           ========================================================= */
+        function setStep2Preset(mA, mB) {
+            document.getElementById('s2-slider-a').value = mA;
+            document.getElementById('s2-slider-b').value = mB;
+            updateStep2();
+        }
+
+        function updateStep2() {
+            const mA = parseInt(document.getElementById('s2-slider-a').value);
+            const mB = parseInt(document.getElementById('s2-slider-b').value);
+
+            document.getElementById('s2-mag-a-val').textContent = `${mA} 등급`;
+            document.getElementById('s2-mag-b-val').textContent = `${mB} 등급`;
+            document.getElementById('label-star-a').textContent = `별 A : ${mA}등급`;
+            document.getElementById('label-star-b').textContent = `별 B : ${mB}등급`;
+
+            document.getElementById('desc-star-a').textContent = getMagDescription(mA);
+            document.getElementById('desc-star-b').textContent = getMagDescription(mB);
+
+            // 시각적 별 구체 크기 계산 (-2등급: 115px ~ +6등급: 20px)
+            const sizeA = Math.max(18, 115 - (mA + 2) * 11.5);
+            const sizeB = Math.max(18, 115 - (mB + 2) * 11.5);
+
+            const orbA = document.getElementById('orb-star-a');
+            const orbB = document.getElementById('orb-star-b');
+            orbA.style.width = `${sizeA}px`;
+            orbA.style.height = `${sizeA}px`;
+            orbB.style.width = `${sizeB}px`;
+            orbB.style.height = `${sizeB}px`;
+
+            const diff = Math.abs(mA - mB);
+            document.getElementById('mag-diff-badge').textContent = `${diff}등급 차이`;
+
+            const mainBanner = document.getElementById('s2-result-main');
+            const formulaBanner = document.getElementById('s2-result-formula');
+
+            if (diff === 0) {
+                mainBanner.innerHTML = `별 A(${mA}등급)와 별 B(${mB}등급)는 <span style="color: var(--accent-cyan);">밝기가 같습니다 (1배)</span>.`;
+                formulaBanner.textContent = `등급 차이가 0이므로 두 별의 밝기는 동일합니다.`;
+                return;
+            }
+
+            // 교육과정 표준 근사값(2.5^n, 5등급 차=100배) 계산
+            const ratioText = getCurriculumBrightnessRatio(diff);
+            const formulaText = getCurriculumFormulaText(diff);
+
+            if (mA < mB) {
+                mainBanner.innerHTML = `별 A(${mA}등급)는 별 B(${mB}등급)보다 약 <span style="color: var(--accent-gold); font-size: 1.3rem;">${ratioText}</span> 더 밝습니다!`;
+            } else {
+                mainBanner.innerHTML = `별 B(${mB}등급)는 별 A(${mA}등급)보다 약 <span style="color: var(--accent-gold); font-size: 1.3rem;">${ratioText}</span> 더 밝습니다!`;
+            }
+            formulaBanner.textContent = `계산 과정: ${diff}등급 차이 = ${formulaText}`;
+        }
+
+        function getMagDescription(m) {
+            if (m <= -1) return '1등급보다 훨씬 밝은 천체';
+            if (m === 0) return '1등급보다 약 2.5배 밝음';
+            if (m === 1) return '히파르코스 기준 가장 밝은 별';
+            if (m === 6) return '맨눈으로 볼 수 있는 가장 어두운 별';
+            return `${m}등성`;
+        }
+
+        function getCurriculumBrightnessRatio(diff) {
+            const table = {
+                1: '2.5배',
+                2: '6.3배',
+                3: '16배',
+                4: '40배',
+                5: '100배',
+                6: '250배',
+                7: '630배',
+                8: '1,600배'
+            };
+            return table[diff] || `${Math.round(Math.pow(2.512, diff))}배`;
+        }
+
+        function getCurriculumFormulaText(diff) {
+            if (diff === 1) return '2.5배';
+            if (diff === 5) return '2.5⁵ ≈ 100배 (5등급 차 = 100배 기준)';
+            if (diff < 5) return `2.5^${diff} ≈ ${getCurriculumBrightnessRatio(diff)}`;
+            const rem = diff - 5;
+            return `100배(5등급 차) × ${getCurriculumBrightnessRatio(rem)}(${rem}등급 차) ≈ ${getCurriculumBrightnessRatio(diff)}`;
+        }
+
+        /* =========================================================
+           [3단계] 겉보기 등급 탐구 & 형성평가 퀴즈
+           ========================================================= */
+        const c3 = document.getElementById('canvasStep3');
+        const ctx3 = c3.getContext('2d');
+
+        let s3Mode = 'real'; // 'real' | 'move'
+        let s3MoveDist = 10; // 10 ~ 100 pc
+
+        function setStep3Mode(mode) {
+            s3Mode = mode;
+            document.getElementById('btn-mode-real').classList.toggle('active', mode === 'real');
+            document.getElementById('btn-mode-move').classList.toggle('active', mode === 'move');
+
+            document.getElementById('panel-mode-real').style.display = mode === 'real' ? 'block' : 'none';
+            document.getElementById('panel-mode-move').style.display = mode === 'move' ? 'block' : 'none';
+
+            document.getElementById('s3-star-name-badge').textContent =
+                mode === 'real' ? '대표 천체 3종 비교 모드' : '별 거리 이동 실험 모드';
+
+            drawStep3Scene();
+        }
+
+        function updateStep3Move(val) {
+            s3MoveDist = parseInt(val);
+            // 기준: 10 pc 일 때 겉보기 등급 1.0등급 -> m = 1.0 + 5 * log10(d / 10)
+            const appMag = (1.0 + 5 * Math.log10(s3MoveDist / 10)).toFixed(1);
+
+            document.getElementById('s3-move-dist-val').textContent = `거리: ${s3MoveDist} pc`;
+            document.getElementById('s3-stat-dist').textContent = `${s3MoveDist} pc`;
+            document.getElementById('s3-stat-mag').textContent = `${appMag} 등급`;
+
+            drawStep3Scene();
+        }
+
+        function drawStep3Scene() {
+            const W = c3.width;
+            const H = c3.height;
+            ctx3.clearRect(0, 0, W, H);
+
+            // 우주 배경
+            ctx3.fillStyle = '#060a17';
+            ctx3.fillRect(0, 0, W, H);
+
+            // 왼쪽: 지구 관측자
+            const earthX = 85;
+            const earthY = H / 2;
+
+            const earthGlow = ctx3.createRadialGradient(earthX, earthY, 8, earthX, earthY, 45);
+            earthGlow.addColorStop(0, '#38bdf8');
+            earthGlow.addColorStop(0.5, '#1d4ed8');
+            earthGlow.addColorStop(1, 'rgba(29, 78, 216, 0)');
+            ctx3.fillStyle = earthGlow;
+            ctx3.beginPath();
+            ctx3.arc(earthX, earthY, 45, 0, Math.PI * 2);
+            ctx3.fill();
+
+            ctx3.beginPath();
+            ctx3.arc(earthX, earthY, 22, 0, Math.PI * 2);
+            ctx3.fillStyle = '#2563eb';
+            ctx3.fill();
+            ctx3.strokeStyle = '#93c5fd';
+            ctx3.lineWidth = 2;
+            ctx3.stroke();
+
+            ctx3.fillStyle = '#ffffff';
+            ctx3.font = 'bold 13px sans-serif';
+            ctx3.textAlign = 'center';
+            ctx3.fillText('🌍 지구 (관측자)', earthX, earthY + 42);
+
+            if (s3Mode === 'real') {
+                // 대표 천체 3종 배치 (거리 축척은 시각적 이해를 위해 비선형 배치)
+                const stars = [
+                    {
+                        name: '☀️ 태양',
+                        x: 220, y: 95,
+                        visualR: 34, color: '#fbbf24',
+                        distText: '매우 가까움 (약 8광분)',
+                        magText: '겉보기 등급: -26.8등급',
+                        subText: '실제 밝기는 평범하지만 가장 가까움!'
+                    },
+                    {
+                        name: '✨ 시리우스',
+                        x: 395, y: 205,
+                        visualR: 22, color: '#bae6fd',
+                        distText: '거리: 약 8.6 광년',
+                        magText: '겉보기 등급: -1.5등급',
+                        subText: '밤하늘에서 가장 밝게 보이는 별'
+                    },
+                    {
+                        name: '🔥 베텔게우스',
+                        x: 605, y: 305,
+                        visualR: 15, color: '#fb7185',
+                        distText: '거리: 약 640 광년',
+                        magText: '겉보기 등급: +0.5등급',
+                        subText: '실제로는 태양보다 수만 배 밝지만 매우 멈!'
+                    }
+                ];
+
+                stars.forEach(st => {
+                    // 시선 연결 점선
+                    ctx3.beginPath();
+                    ctx3.moveTo(earthX + 24, earthY);
+                    ctx3.lineTo(st.x, st.y);
+                    ctx3.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+                    ctx3.lineWidth = 1.5;
+                    ctx3.setLineDash([5, 5]);
+                    ctx3.stroke();
+                    ctx3.setLineDash([]);
+
+                    // 별 빛무리
+                    const g = ctx3.createRadialGradient(st.x, st.y, 2, st.x, st.y, st.visualR * 1.8);
+                    g.addColorStop(0, '#ffffff');
+                    g.addColorStop(0.4, st.color);
+                    g.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx3.fillStyle = g;
+                    ctx3.beginPath();
+                    ctx3.arc(st.x, st.y, st.visualR * 1.8, 0, Math.PI * 2);
+                    ctx3.fill();
+
+                    // 중심 핵
+                    ctx3.beginPath();
+                    ctx3.arc(st.x, st.y, st.visualR * 0.45, 0, Math.PI * 2);
+                    ctx3.fillStyle = '#ffffff';
+                    ctx3.fill();
+
+                    // 라벨
+                    ctx3.fillStyle = '#ffffff';
+                    ctx3.font = 'bold 14px sans-serif';
+                    ctx3.textAlign = 'center';
+                    ctx3.fillText(`${st.name} (${st.magText})`, st.x, st.y - st.visualR - 14);
+
+                    ctx3.fillStyle = '#cbd5e1';
+                    ctx3.font = '12px sans-serif';
+                    ctx3.fillText(`${st.distText} · ${st.subText}`, st.x, st.y + st.visualR + 18);
+                });
+            } else {
+                // 거리 이동 실험 모드 (10 pc ~ 100 pc)
+                const minX = 210;
+                const maxX = W - 90;
+                const ratio = (s3MoveDist - 10) / 90;
+                const starX = minX + ratio * (maxX - minX);
+                const starY = H / 2;
+
+                // 거리 눈금선
+                ctx3.strokeStyle = '#334155';
+                ctx3.lineWidth = 2;
+                ctx3.beginPath();
+                ctx3.moveTo(minX, H - 55);
+                ctx3.lineTo(maxX, H - 55);
+                ctx3.stroke();
+
+                [10, 40, 70, 100].forEach(dMark => {
+                    const mx = minX + ((dMark - 10) / 90) * (maxX - minX);
+                    ctx3.beginPath();
+                    ctx3.moveTo(mx, H - 62);
+                    ctx3.lineTo(mx, H - 48);
+                    ctx3.strokeStyle = '#64748b';
+                    ctx3.stroke();
+
+                    ctx3.fillStyle = '#94a3b8';
+                    ctx3.font = '12px sans-serif';
+                    ctx3.textAlign = 'center';
+                    ctx3.fillText(`${dMark} pc`, mx, H - 32);
+                });
+
+                // 지구 -> 별 시선
+                ctx3.beginPath();
+                ctx3.moveTo(earthX + 25, earthY);
+                ctx3.lineTo(starX, starY);
+                ctx3.strokeStyle = '#38bdf8';
+                ctx3.lineWidth = 2;
+                ctx3.setLineDash([6, 4]);
+                ctx3.stroke();
+                ctx3.setLineDash([]);
+
+                // 거리에 반비례하는 겉보기 빛무리 반지름
+                const glowR = Math.max(14, 52 / Math.sqrt(s3MoveDist / 10));
+                const appMag = (1.0 + 5 * Math.log10(s3MoveDist / 10)).toFixed(1);
+
+                const g = ctx3.createRadialGradient(starX, starY, 3, starX, starY, glowR);
+                g.addColorStop(0, '#ffffff');
+                g.addColorStop(0.4, '#fbbf24');
+                g.addColorStop(1, 'rgba(251, 191, 36, 0)');
+                ctx3.fillStyle = g;
+                ctx3.beginPath();
+                ctx3.arc(starX, starY, glowR, 0, Math.PI * 2);
+                ctx3.fill();
+
+                ctx3.beginPath();
+                ctx3.arc(starX, starY, 7, 0, Math.PI * 2);
+                ctx3.fillStyle = '#ffffff';
+                ctx3.fill();
+
+                ctx3.fillStyle = '#fbbf24';
+                ctx3.font = 'bold 15px sans-serif';
+                ctx3.textAlign = 'center';
+                ctx3.fillText(`겉보기 등급: ${appMag}등급`, starX, starY - glowR - 14);
+
+                ctx3.fillStyle = '#cbd5e1';
+                ctx3.font = '12px sans-serif';
+                ctx3.fillText(`거리: ${s3MoveDist} pc`, starX, starY + glowR + 20);
+            }
+        }
+
+        /* =========================================================
+           형성평가 퀴즈 채점 로직
+           ========================================================= */
+        const quizFeedbacks = {
+            1: {
+                ok: '정답입니다! 🎉 별의 밝기는 거리의 제곱에 반비례하므로, 거리가 3배 멀어지면 빛이 9배 넓게 퍼져 밝기는 1/9배가 됩니다.',
+                no: '다시 생각해 보세요! 별의 밝기는 거리의 제곱(3² = 9)에 반비례하여 어두워집니다.'
+            },
+            2: {
+                ok: '정답입니다! 🎉 1등급과 4등급은 3등급 차이이므로 2.5 × 2.5 × 2.5 = 2.5³ ≈ 16배 더 밝습니다.',
+                no: '아쉽네요! 1등급 차이는 약 2.5배입니다. 3등급 차이이므로 2.5를 세 번 곱해보세요(2.5³).'
+            },
+            3: {
+                ok: '정답입니다! 🎉 겉보기 등급은 거리를 고려하지 않고 지구에서 눈으로 보았을 때 느껴지는 밝기를 기준으로 정한 등급입니다.',
+                no: '오답입니다! 겉보기 등급은 지구에서 관측한 그대로의 밝기이며, 숫자가 작을수록 밝은 별입니다.'
+            }
+        };
+
+        const quizSolved = { 1: false, 2: false, 3: false };
+
+        function answerQuiz(qNum, optIdx, isCorrect) {
+            const box = document.getElementById(`q-box-${qNum}`);
+            const btns = box.querySelectorAll('.opt-btn');
+            const fb = document.getElementById(`q-fb-${qNum}`);
+
+            btns.forEach((b, idx) => {
+                b.classList.remove('correct', 'wrong');
+                if (idx === optIdx) {
+                    b.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
+            });
+
+            fb.classList.add('show');
+            if (isCorrect) {
+                fb.style.background = 'rgba(16, 185, 129, 0.2)';
+                fb.style.color = '#6ee7b7';
+                fb.textContent = quizFeedbacks[qNum].ok;
+                quizSolved[qNum] = true;
+            } else {
+                fb.style.background = 'rgba(244, 63, 94, 0.2)';
+                fb.style.color = '#fda4af';
+                fb.textContent = quizFeedbacks[qNum].no;
+            }
+
+            const count = Object.values(quizSolved).filter(Boolean).length;
+            document.getElementById('quiz-score-text').textContent = `정답 수: ${count} / 3`;
+            if (isCorrect && count === 3) {
+                showToast('축하합니다! 모든 형성평가 문제를 맞혔습니다! 🎉');
+            }
+        }
+
+        /* =========================================================
+           초기화 실행
+           ========================================================= */
+        window.onload = function() {
+            setStep1Dist(1);
+            updateStep2();
+            updateStep3Move(10);
+            drawStep3Scene();
+        };
+    </script>
+</body>
+</html>
